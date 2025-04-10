@@ -1,0 +1,99 @@
+(venv) root@b0a69ad89f5a:~/suyamoon# python3 secondClassifier.py 
+Resolving data files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████| 27/27 [00:00<00:00, 110592.00it/s]
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 1874/1874 [00:00<00:00, 9820.65 examples/s]
+Alpha values: tensor([ 1.0661, 16.1183])
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Parameter 'function'=<function <lambda> at 0x7f174a6e2e50> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 1499/1499 [00:00<00:00, 1649.55 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 187/187 [00:00<00:00, 1731.64 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 188/188 [00:00<00:00, 1849.72 examples/s]
+{'loss': 0.5425, 'grad_norm': 0.02316867560148239, 'learning_rate': 1.8222222222222224e-05, 'epoch': 0.27}                                                      
+{'loss': 0.0273, 'grad_norm': 0.002120726741850376, 'learning_rate': 1.6444444444444444e-05, 'epoch': 0.53}                                                     
+{'loss': 0.375, 'grad_norm': 166.86553955078125, 'learning_rate': 1.4666666666666666e-05, 'epoch': 0.8}                                                         
+{'eval_loss': 0.27619868516921997, 'eval_f1': 0.7692307692307692, 'eval_runtime': 6.0015, 'eval_samples_per_second': 31.159, 'eval_steps_per_second': 7.831, 'epoch': 1.0}                                                                                                                                                      
+{'loss': 0.258, 'grad_norm': 0.01643076166510582, 'learning_rate': 1.288888888888889e-05, 'epoch': 1.07}                                                        
+{'loss': 0.1763, 'grad_norm': 0.02707982435822487, 'learning_rate': 1.1111111111111113e-05, 'epoch': 1.33}                                                      
+{'loss': 0.2301, 'grad_norm': 0.0071273427456617355, 'learning_rate': 9.333333333333334e-06, 'epoch': 1.6}                                                      
+{'loss': 0.0439, 'grad_norm': 0.03026459738612175, 'learning_rate': 7.555555555555556e-06, 'epoch': 1.87}                                                       
+{'eval_loss': 0.3316066861152649, 'eval_f1': 0.7407407407407406, 'eval_runtime': 5.9918, 'eval_samples_per_second': 31.21, 'eval_steps_per_second': 7.844, 'epoch': 2.0}                                                                                                                                                        
+{'loss': 0.0145, 'grad_norm': 0.0024025561287999153, 'learning_rate': 5.777777777777778e-06, 'epoch': 2.13}                                                     
+{'loss': 0.0328, 'grad_norm': 0.0026529785245656967, 'learning_rate': 4.000000000000001e-06, 'epoch': 2.4}                                                      
+{'loss': 0.0627, 'grad_norm': 0.0011346471728757024, 'learning_rate': 2.222222222222222e-06, 'epoch': 2.67}                                                     
+{'loss': 0.1064, 'grad_norm': 0.001451299642212689, 'learning_rate': 4.444444444444445e-07, 'epoch': 2.93}                                                      
+{'eval_loss': 0.4607413709163666, 'eval_f1': 0.7200000000000001, 'eval_runtime': 5.9872, 'eval_samples_per_second': 31.233, 'eval_steps_per_second': 7.85, 'epoch': 3.0}                                                                                                                                                        
+{'train_runtime': 413.2727, 'train_samples_per_second': 10.881, 'train_steps_per_second': 2.722, 'train_loss': 0.16776593663957384, 'epoch': 3.0}               
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1125/1125 [06:53<00:00,  2.72it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 47/47 [00:05<00:00,  8.03it/s]
+tokenizer_config.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████| 48.0/48.0 [00:00<00:00, 1.79kB/s]
+vocab.txt: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████| 222k/222k [00:00<00:00, 5.00MB/s]
+special_tokens_map.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████| 112/112 [00:00<00:00, 29.1kB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at nlpaueb/legal-bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 1499/1499 [00:00<00:00, 1763.21 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 187/187 [00:00<00:00, 1868.33 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 188/188 [00:00<00:00, 1909.15 examples/s]
+{'loss': 0.8122, 'grad_norm': 0.30411043763160706, 'learning_rate': 1.8222222222222224e-05, 'epoch': 0.27}                                                      
+{'loss': 0.0758, 'grad_norm': 0.008556794375181198, 'learning_rate': 1.6444444444444444e-05, 'epoch': 0.53}                                                     
+{'loss': 0.5662, 'grad_norm': 161.57041931152344, 'learning_rate': 1.4666666666666666e-05, 'epoch': 0.8}                                                        
+{'eval_loss': 0.8374496102333069, 'eval_f1': 0.4444444444444444, 'eval_runtime': 5.9949, 'eval_samples_per_second': 31.193, 'eval_steps_per_second': 7.84, 'epoch': 1.0}                                                                                                                                                        
+{'loss': 0.1703, 'grad_norm': 0.02473176084458828, 'learning_rate': 1.288888888888889e-05, 'epoch': 1.07}                                                       
+{'loss': 0.2588, 'grad_norm': 0.00831601582467556, 'learning_rate': 1.1111111111111113e-05, 'epoch': 1.33}                                                      
+{'loss': 0.1918, 'grad_norm': 0.003916176501661539, 'learning_rate': 9.333333333333334e-06, 'epoch': 1.6}                                                       
+{'loss': 0.0522, 'grad_norm': 0.011554358527064323, 'learning_rate': 7.555555555555556e-06, 'epoch': 1.87}                                                      
+{'eval_loss': 0.2405874878168106, 'eval_f1': 0.8, 'eval_runtime': 5.9941, 'eval_samples_per_second': 31.197, 'eval_steps_per_second': 7.841, 'epoch': 2.0}      
+{'loss': 0.1501, 'grad_norm': 0.0054476140066981316, 'learning_rate': 5.777777777777778e-06, 'epoch': 2.13}                                                     
+{'loss': 0.0264, 'grad_norm': 0.0048401919193565845, 'learning_rate': 4.000000000000001e-06, 'epoch': 2.4}                                                      
+{'loss': 0.0311, 'grad_norm': 0.002353683579713106, 'learning_rate': 2.222222222222222e-06, 'epoch': 2.67}                                                      
+{'loss': 0.0786, 'grad_norm': 0.0016427648952230811, 'learning_rate': 4.444444444444445e-07, 'epoch': 2.93}                                                     
+{'eval_loss': 0.2476561814546585, 'eval_f1': 0.8, 'eval_runtime': 5.9913, 'eval_samples_per_second': 31.212, 'eval_steps_per_second': 7.845, 'epoch': 3.0}      
+{'train_runtime': 412.3587, 'train_samples_per_second': 10.906, 'train_steps_per_second': 2.728, 'train_loss': 0.21841019694010416, 'epoch': 3.0}               
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1125/1125 [06:52<00:00,  2.73it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 47/47 [00:05<00:00,  8.00it/s]
+tokenizer_config.json: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 343/343 [00:00<00:00, 101kB/s]
+vocab.txt: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████| 232k/232k [00:00<00:00, 570kB/s]
+special_tokens_map.json: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████| 112/112 [00:00<00:00, 34.5kB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at law-ai/InCaseLawBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 1499/1499 [00:00<00:00, 1904.89 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 187/187 [00:00<00:00, 1839.00 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 188/188 [00:00<00:00, 1840.88 examples/s]
+{'loss': 0.6709, 'grad_norm': 0.019512133672833443, 'learning_rate': 1.8222222222222224e-05, 'epoch': 0.27}                                                     
+{'loss': 0.0248, 'grad_norm': 0.003631317988038063, 'learning_rate': 1.6444444444444444e-05, 'epoch': 0.53}                                                     
+{'loss': 0.4867, 'grad_norm': 150.1436004638672, 'learning_rate': 1.4666666666666666e-05, 'epoch': 0.8}                                                         
+{'eval_loss': 0.5092765092849731, 'eval_f1': 0.6956521739130435, 'eval_runtime': 5.9839, 'eval_samples_per_second': 31.251, 'eval_steps_per_second': 7.854, 'epoch': 1.0}                                                                                                                                                       
+{'loss': 0.3248, 'grad_norm': 0.13195611536502838, 'learning_rate': 1.288888888888889e-05, 'epoch': 1.07}                                                       
+{'loss': 0.1234, 'grad_norm': 0.012725734151899815, 'learning_rate': 1.1111111111111113e-05, 'epoch': 1.33}                                                     
+{'loss': 0.2052, 'grad_norm': 0.0018681441433727741, 'learning_rate': 9.333333333333334e-06, 'epoch': 1.6}                                                      
+{'loss': 0.1338, 'grad_norm': 0.2865794599056244, 'learning_rate': 7.555555555555556e-06, 'epoch': 1.87}                                                        
+{'eval_loss': 0.31104567646980286, 'eval_f1': 0.7692307692307692, 'eval_runtime': 5.9887, 'eval_samples_per_second': 31.225, 'eval_steps_per_second': 7.848, 'epoch': 2.0}                                                                                                                                                      
+{'loss': 0.0509, 'grad_norm': 0.006741016171872616, 'learning_rate': 5.777777777777778e-06, 'epoch': 2.13}                                                      
+{'loss': 0.0297, 'grad_norm': 0.0024058411363512278, 'learning_rate': 4.000000000000001e-06, 'epoch': 2.4}                                                      
+{'loss': 0.0157, 'grad_norm': 0.0036917899269610643, 'learning_rate': 2.222222222222222e-06, 'epoch': 2.67}                                                     
+{'loss': 0.0555, 'grad_norm': 0.004261573310941458, 'learning_rate': 4.444444444444445e-07, 'epoch': 2.93}                                                      
+{'eval_loss': 0.317547470331192, 'eval_f1': 0.7692307692307692, 'eval_runtime': 6.0075, 'eval_samples_per_second': 31.128, 'eval_steps_per_second': 7.823, 'epoch': 3.0}                                                                                                                                                        
+{'train_runtime': 412.5788, 'train_samples_per_second': 10.9, 'train_steps_per_second': 2.727, 'train_loss': 0.19143551370832654, 'epoch': 3.0}                 
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1125/1125 [06:52<00:00,  2.73it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 47/47 [00:05<00:00,  8.04it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 1499/1499 [00:00<00:00, 2652.56 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 187/187 [00:00<00:00, 2277.75 examples/s]
+Map: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 188/188 [00:00<00:00, 2451.57 examples/s]
+{'loss': 0.9974, 'grad_norm': 0.053877025842666626, 'learning_rate': 1.8222222222222224e-05, 'epoch': 0.27}                                                     
+{'loss': 0.3084, 'grad_norm': 0.006244635209441185, 'learning_rate': 1.6444444444444444e-05, 'epoch': 0.53}                                                     
+{'loss': 0.7123, 'grad_norm': 151.77767944335938, 'learning_rate': 1.4666666666666666e-05, 'epoch': 0.8}                                                        
+{'eval_loss': 0.861925482749939, 'eval_f1': 0.6, 'eval_runtime': 6.006, 'eval_samples_per_second': 31.136, 'eval_steps_per_second': 7.826, 'epoch': 1.0}        
+{'loss': 0.5822, 'grad_norm': 0.014367043040692806, 'learning_rate': 1.288888888888889e-05, 'epoch': 1.07}                                                      
+{'loss': 0.2606, 'grad_norm': 0.8198221325874329, 'learning_rate': 1.1111111111111113e-05, 'epoch': 1.33}                                                       
+{'loss': 0.2832, 'grad_norm': 0.0030169261153787374, 'learning_rate': 9.333333333333334e-06, 'epoch': 1.6}                                                      
+{'loss': 0.1922, 'grad_norm': 0.012498405762016773, 'learning_rate': 7.555555555555556e-06, 'epoch': 1.87}                                                      
+{'eval_loss': 0.3326551616191864, 'eval_f1': 0.8, 'eval_runtime': 6.0098, 'eval_samples_per_second': 31.116, 'eval_steps_per_second': 7.821, 'epoch': 2.0}      
+{'loss': 0.1199, 'grad_norm': 0.0028764894232153893, 'learning_rate': 5.777777777777778e-06, 'epoch': 2.13}                                                     
+{'loss': 0.0456, 'grad_norm': 0.014667965471744537, 'learning_rate': 4.000000000000001e-06, 'epoch': 2.4}                                                       
+{'loss': 0.022, 'grad_norm': 0.0011906286235898733, 'learning_rate': 2.222222222222222e-06, 'epoch': 2.67}                                                      
+{'loss': 0.226, 'grad_norm': 0.0007522963569499552, 'learning_rate': 4.444444444444445e-07, 'epoch': 2.93}                                                      
+{'eval_loss': 0.330658495426178, 'eval_f1': 0.8333333333333333, 'eval_runtime': 6.0213, 'eval_samples_per_second': 31.056, 'eval_steps_per_second': 7.806, 'epoch': 3.0}                                                                                                                                                        
+{'train_runtime': 419.1866, 'train_samples_per_second': 10.728, 'train_steps_per_second': 2.684, 'train_loss': 0.33769078424241805, 'epoch': 3.0}               
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1125/1125 [06:59<00:00,  2.68it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 47/47 [00:05<00:00,  8.01it/s]

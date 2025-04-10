@@ -1,0 +1,217 @@
+Code:
+
+# Import libraries
+from datasets import load_dataset, DatasetDict
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
+import numpy as np
+from sklearn.metrics import f1_score
+
+# Load dataset from CSV files
+dataset = load_dataset(
+    "csv", 
+    data_dir="combinedCleanFinal",
+    delimiter=",",
+    split="train"
+)
+
+# Split dataset into train, validation, and test sets (80-10-10 split)
+split = dataset.train_test_split(test_size=0.2, seed=42)
+test_valid = split["test"].train_test_split(test_size=0.5, seed=42)
+
+# Create DatasetDict for Hugging Face compatibility
+dataset = DatasetDict({
+    "train": split["train"],
+    "valid": test_valid["train"], 
+    "test": test_valid["test"]
+})
+
+# Rename 'class' column to 'labels' for compatibility with Hugging Face models
+dataset = dataset.rename_column("class", "labels")
+
+# Load tokenizer for BERT-based models
+MODELS = {
+    "BERT": "bert-base-uncased",
+    "LegalBERT": "nlpaueb/legal-bert-base-uncased",
+    "InCaseLawBERT": "law-ai/InCaseLawBERT"
+}
+
+tokenizer = AutoTokenizer.from_pretrained(MODELS["BERT"])
+
+# Tokenization function
+def tokenize_function(examples):
+    tokenized = tokenizer(
+        examples["text"],
+        padding="max_length",
+        truncation=True,
+        max_length=512
+    )
+    tokenized["labels"] = examples["labels"]  # Preserve labels during tokenization
+    return tokenized
+
+# Apply tokenization to the datasets
+tokenized_datasets = dataset.map(tokenize_function, batched=True)
+
+# Remove unnecessary columns and set format for PyTorch compatibility
+tokenized_datasets = tokenized_datasets.remove_columns(["text"])
+tokenized_datasets.set_format("torch", columns=["input_ids", "attention_mask", "labels"])
+
+# Define metrics function (F1 score)
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return {"f1": f1_score(labels, predictions, average="binary")}
+
+# Training arguments configuration
+training_args = TrainingArguments(
+    output_dir="./results",
+    evaluation_strategy="epoch",
+    learning_rate=2e-5,
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=4,
+    num_train_epochs=3,
+    weight_decay=0.01,
+    save_strategy="no",
+    logging_steps=100,
+    remove_unused_columns=False  # Ensure label column is not removed automatically
+)
+
+# Fine-tune each model
+for model_name, model_checkpoint in MODELS.items():
+    print(f"Training {model_name}...")
+    
+    # Load pre-trained model with sequence classification head
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_checkpoint,
+        num_labels=2  # Binary classification task
+    )
+    
+    # Initialize Trainer for fine-tuning
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_datasets["train"],
+        eval_dataset=tokenized_datasets["valid"],
+        compute_metrics=compute_metrics
+    )
+    
+    # Train the model and evaluate on the validation set
+    trainer.train()
+    
+    # Evaluate on the test set and print results
+    results = trainer.evaluate(tokenized_datasets["test"])
+    print(f"{model_name} Results:", results)
+    
+    # Save the fine-tuned model and tokenizer
+    model.save_pretrained(f"./{model_name}_finetuned")
+    tokenizer.save_pretrained(f"./{model_name}_finetuned")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(venv) root@b0a69ad89f5a:~/suyamoon# python pythonScript2.py 
+Parameter 'function'=<function tokenize_function at 0x7fc468f6e5e0> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+Map: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 2360/2360 [00:01<00:00, 1387.44 examples/s]
+Map: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 295/295 [00:00<00:00, 1647.83 examples/s]
+Map: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 296/296 [00:00<00:00, 1706.74 examples/s]
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+        - Avoid using `tokenizers` before the fork if possible
+        - Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+Training BERT...
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+{'loss': 0.6359, 'grad_norm': 5.944642066955566, 'learning_rate': 1.8870056497175144e-05, 'epoch': 0.17}                                             
+{'loss': 0.5593, 'grad_norm': 7.890067100524902, 'learning_rate': 1.7740112994350286e-05, 'epoch': 0.34}                                             
+{'loss': 0.5428, 'grad_norm': 19.850643157958984, 'learning_rate': 1.6610169491525424e-05, 'epoch': 0.51}                                            
+{'loss': 0.4574, 'grad_norm': 7.769970893859863, 'learning_rate': 1.5480225988700566e-05, 'epoch': 0.68}                                             
+{'loss': 0.5617, 'grad_norm': 34.883445739746094, 'learning_rate': 1.4350282485875708e-05, 'epoch': 0.85}                                            
+{'eval_loss': 0.6873990297317505, 'eval_f1': 0.5911949685534591, 'eval_runtime': 9.3851, 'eval_samples_per_second': 31.433, 'eval_steps_per_second': 7.885, 'epoch': 1.0}                                                                                                                                 
+{'loss': 0.5045, 'grad_norm': 10.769280433654785, 'learning_rate': 1.3220338983050848e-05, 'epoch': 1.02}                                            
+{'loss': 0.4197, 'grad_norm': 0.4474056661128998, 'learning_rate': 1.209039548022599e-05, 'epoch': 1.19}                                             
+{'loss': 0.4221, 'grad_norm': 8.4711332321167, 'learning_rate': 1.096045197740113e-05, 'epoch': 1.36}                                                
+{'loss': 0.3915, 'grad_norm': 28.18671989440918, 'learning_rate': 9.830508474576272e-06, 'epoch': 1.53}                                              
+{'loss': 0.4164, 'grad_norm': 0.33314910531044006, 'learning_rate': 8.700564971751413e-06, 'epoch': 1.69}                                            
+{'loss': 0.4138, 'grad_norm': 40.11802291870117, 'learning_rate': 7.5706214689265545e-06, 'epoch': 1.86}                                             
+{'eval_loss': 0.6484995484352112, 'eval_f1': 0.7676767676767676, 'eval_runtime': 9.38, 'eval_samples_per_second': 31.45, 'eval_steps_per_second': 7.889, 'epoch': 2.0}                                                                                                                                    
+{'loss': 0.3666, 'grad_norm': 0.08304997533559799, 'learning_rate': 6.440677966101695e-06, 'epoch': 2.03}                                            
+{'loss': 0.2546, 'grad_norm': 14.298985481262207, 'learning_rate': 5.310734463276837e-06, 'epoch': 2.2}                                              
+{'loss': 0.1908, 'grad_norm': 35.02427673339844, 'learning_rate': 4.180790960451978e-06, 'epoch': 2.37}                                              
+{'loss': 0.2898, 'grad_norm': 0.05818018317222595, 'learning_rate': 3.0508474576271192e-06, 'epoch': 2.54}                                           
+{'loss': 0.2035, 'grad_norm': 0.09649050980806351, 'learning_rate': 1.92090395480226e-06, 'epoch': 2.71}                                             
+{'loss': 0.2108, 'grad_norm': 0.18586908280849457, 'learning_rate': 7.909604519774013e-07, 'epoch': 2.88}                                            
+{'eval_loss': 0.7555438280105591, 'eval_f1': 0.7525773195876289, 'eval_runtime': 9.379, 'eval_samples_per_second': 31.453, 'eval_steps_per_second': 7.89, 'epoch': 3.0}                                                                                                                                   
+{'train_runtime': 645.1483, 'train_samples_per_second': 10.974, 'train_steps_per_second': 2.744, 'train_loss': 0.39968139734645347, 'epoch': 3.0}    
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1770/1770 [10:45<00:00,  2.74it/s]
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 74/74 [00:09<00:00,  8.00it/s]
+BERT Results: {'eval_loss': 0.820469081401825, 'eval_f1': 0.7579908675799086, 'eval_runtime': 9.3769, 'eval_samples_per_second': 31.567, 'eval_steps_per_second': 7.892, 'epoch': 3.0}
+Training LegalBERT...
+config.json: 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 1.02k/1.02k [00:00<00:00, 94.0kB/s]
+pytorch_model.bin: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 440M/440M [00:06<00:00, 69.3MB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at nlpaueb/legal-bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+{'loss': 0.6433, 'grad_norm': 13.534651756286621, 'learning_rate': 1.8870056497175144e-05, 'epoch': 0.17}                                            
+{'loss': 0.6579, 'grad_norm': 11.754694938659668, 'learning_rate': 1.7740112994350286e-05, 'epoch': 0.34}                                            
+{'loss': 0.6419, 'grad_norm': 12.250311851501465, 'learning_rate': 1.6610169491525424e-05, 'epoch': 0.51}                                            
+{'loss': 0.6062, 'grad_norm': 17.083173751831055, 'learning_rate': 1.5480225988700566e-05, 'epoch': 0.68}                                            
+{'loss': 0.567, 'grad_norm': 9.055935859680176, 'learning_rate': 1.4350282485875708e-05, 'epoch': 0.85}                                              
+{'eval_loss': 0.6897921562194824, 'eval_f1': 0.5844155844155845, 'eval_runtime': 9.379, 'eval_samples_per_second': 31.453, 'eval_steps_per_second': 7.89, 'epoch': 1.0}                                                                                                                                   
+{'loss': 0.5223, 'grad_norm': 26.737852096557617, 'learning_rate': 1.3220338983050848e-05, 'epoch': 1.02}                                            
+{'loss': 0.476, 'grad_norm': 2.80527925491333, 'learning_rate': 1.209039548022599e-05, 'epoch': 1.19}                                                
+{'loss': 0.531, 'grad_norm': 49.99283981323242, 'learning_rate': 1.096045197740113e-05, 'epoch': 1.36}                                               
+{'loss': 0.5642, 'grad_norm': 50.39741897583008, 'learning_rate': 9.830508474576272e-06, 'epoch': 1.53}                                              
+{'loss': 0.512, 'grad_norm': 38.47621536254883, 'learning_rate': 8.700564971751413e-06, 'epoch': 1.69}                                               
+{'loss': 0.6145, 'grad_norm': 58.950035095214844, 'learning_rate': 7.5706214689265545e-06, 'epoch': 1.86}                                            
+{'eval_loss': 0.608752965927124, 'eval_f1': 0.7162790697674418, 'eval_runtime': 9.3698, 'eval_samples_per_second': 31.484, 'eval_steps_per_second': 7.898, 'epoch': 2.0}                                                                                                                                  
+{'loss': 0.4779, 'grad_norm': 1.3008136749267578, 'learning_rate': 6.440677966101695e-06, 'epoch': 2.03}                                             
+{'loss': 0.4114, 'grad_norm': 47.22014236450195, 'learning_rate': 5.310734463276837e-06, 'epoch': 2.2}                                               
+{'loss': 0.5361, 'grad_norm': 41.62108612060547, 'learning_rate': 4.180790960451978e-06, 'epoch': 2.37}                                              
+{'loss': 0.4305, 'grad_norm': 7.565640926361084, 'learning_rate': 3.0508474576271192e-06, 'epoch': 2.54}                                             
+{'loss': 0.4724, 'grad_norm': 39.054603576660156, 'learning_rate': 1.92090395480226e-06, 'epoch': 2.71}                                              
+{'loss': 0.374, 'grad_norm': 30.68842887878418, 'learning_rate': 7.909604519774013e-07, 'epoch': 2.88}                                               
+{'eval_loss': 0.7508343458175659, 'eval_f1': 0.6965174129353234, 'eval_runtime': 9.381, 'eval_samples_per_second': 31.447, 'eval_steps_per_second': 7.888, 'epoch': 3.0}                                                                                                                                  
+{'train_runtime': 644.8257, 'train_samples_per_second': 10.98, 'train_steps_per_second': 2.745, 'train_loss': 0.5294666548906747, 'epoch': 3.0}      
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1770/1770 [10:44<00:00,  2.74it/s]
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 74/74 [00:09<00:00,  8.01it/s]
+LegalBERT Results: {'eval_loss': 0.7983359098434448, 'eval_f1': 0.7239819004524887, 'eval_runtime': 9.3678, 'eval_samples_per_second': 31.597, 'eval_steps_per_second': 7.899, 'epoch': 3.0}
+Training InCaseLawBERT...
+config.json: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████| 861/861 [00:00<00:00, 364kB/s]
+pytorch_model.bin: 100%|██████████████████████████████████████████████████████████████████████████████████████████| 534M/534M [00:20<00:00, 25.9MB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at law-ai/InCaseLawBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+{'loss': 0.6227, 'grad_norm': 93.22077941894531, 'learning_rate': 1.8870056497175144e-05, 'epoch': 0.17}                                             
+{'loss': 0.5512, 'grad_norm': 55.752628326416016, 'learning_rate': 1.7740112994350286e-05, 'epoch': 0.34}                                            
+{'loss': 0.4971, 'grad_norm': 141.3406524658203, 'learning_rate': 1.6610169491525424e-05, 'epoch': 0.51}                                             
+{'loss': 0.4858, 'grad_norm': 8.576128959655762, 'learning_rate': 1.5480225988700566e-05, 'epoch': 0.68}                                             
+{'loss': 0.5606, 'grad_norm': 15.650237083435059, 'learning_rate': 1.4350282485875708e-05, 'epoch': 0.85}                                            
+{'eval_loss': 0.5549241900444031, 'eval_f1': 0.7446808510638298, 'eval_runtime': 9.4124, 'eval_samples_per_second': 31.342, 'eval_steps_per_second': 7.862, 'epoch': 1.0}                                                                                                                                 
+{'loss': 0.446, 'grad_norm': 58.47111511230469, 'learning_rate': 1.3220338983050848e-05, 'epoch': 1.02}                                              
+{'loss': 0.3497, 'grad_norm': 30.709928512573242, 'learning_rate': 1.209039548022599e-05, 'epoch': 1.19}                                             
+{'loss': 0.3804, 'grad_norm': 25.69503402709961, 'learning_rate': 1.096045197740113e-05, 'epoch': 1.36}                                              
+{'loss': 0.4179, 'grad_norm': 53.710853576660156, 'learning_rate': 9.830508474576272e-06, 'epoch': 1.53}                                             
+{'loss': 0.4188, 'grad_norm': 0.40724292397499084, 'learning_rate': 8.700564971751413e-06, 'epoch': 1.69}                                            
+{'loss': 0.3879, 'grad_norm': 81.33958435058594, 'learning_rate': 7.5706214689265545e-06, 'epoch': 1.86}                                             
+{'eval_loss': 0.6294575333595276, 'eval_f1': 0.7448979591836734, 'eval_runtime': 9.3846, 'eval_samples_per_second': 31.434, 'eval_steps_per_second': 7.885, 'epoch': 2.0}                                                                                                                                 
+{'loss': 0.3457, 'grad_norm': 0.08140688389539719, 'learning_rate': 6.440677966101695e-06, 'epoch': 2.03}                                            
+{'loss': 0.265, 'grad_norm': 11.22055721282959, 'learning_rate': 5.310734463276837e-06, 'epoch': 2.2}                                                
+{'loss': 0.2048, 'grad_norm': 42.01118469238281, 'learning_rate': 4.180790960451978e-06, 'epoch': 2.37}                                              
+{'loss': 0.2338, 'grad_norm': 0.05489514768123627, 'learning_rate': 3.0508474576271192e-06, 'epoch': 2.54}                                           
+{'loss': 0.2493, 'grad_norm': 0.043870214372873306, 'learning_rate': 1.92090395480226e-06, 'epoch': 2.71}                                            
+{'loss': 0.1097, 'grad_norm': 0.9062220454216003, 'learning_rate': 7.909604519774013e-07, 'epoch': 2.88}                                             
+{'eval_loss': 0.8271223902702332, 'eval_f1': 0.7373737373737375, 'eval_runtime': 9.3976, 'eval_samples_per_second': 31.391, 'eval_steps_per_second': 7.874, 'epoch': 3.0}                                                                                                                                 
+{'train_runtime': 645.4944, 'train_samples_per_second': 10.968, 'train_steps_per_second': 2.742, 'train_loss': 0.38264747177813685, 'epoch': 3.0}    
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1770/1770 [10:45<00:00,  2.74it/s]
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 74/74 [00:09<00:00,  7.98it/s]
+InCaseLawBERT Results: {'eval_loss': 0.8378497362136841, 'eval_f1': 0.7853881278538812, 'eval_runtime': 9.3983, 'eval_samples_per_second': 31.495, 'eval_steps_per_second': 7.874, 'epoch': 3.0}
