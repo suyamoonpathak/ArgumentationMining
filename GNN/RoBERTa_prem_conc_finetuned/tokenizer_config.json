@@ -43,10 +43,11 @@
     }
   },
   "bos_token": "<s>",
-  "clean_up_tokenization_spaces": true,
+  "clean_up_tokenization_spaces": false,
   "cls_token": "<s>",
   "eos_token": "</s>",
   "errors": "replace",
+  "extra_special_tokens": {},
   "mask_token": "<mask>",
   "model_max_length": 512,
   "pad_token": "<pad>",
