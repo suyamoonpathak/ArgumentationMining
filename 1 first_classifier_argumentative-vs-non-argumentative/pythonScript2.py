@@ -30,7 +30,8 @@ dataset = dataset.rename_column("class", "labels")
 MODELS = {
     "BERT": "bert-base-uncased",
     "LegalBERT": "nlpaueb/legal-bert-base-uncased",
-    "InCaseLawBERT": "law-ai/InCaseLawBERT"
+    "InCaseLawBERT": "law-ai/InCaseLawBERT",
+    "RoBERTa": "roberta-base"
 }
 
 tokenizer = AutoTokenizer.from_pretrained(MODELS["BERT"])
