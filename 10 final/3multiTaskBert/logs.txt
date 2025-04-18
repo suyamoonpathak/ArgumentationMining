@@ -1,0 +1,79 @@
+(argmining) suyamoon@exploration-lab-server-A40:/DATA9/suyamoon/ArgumentationMining/10 final/3multiTaskBert/scripts$ python train.py 
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 1 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1106/1106 [03:43<00:00,  4.94it/s]
+Fold 1 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1106/1106 [03:40<00:00,  5.02it/s]
+Fold 1 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1106/1106 [03:39<00:00,  5.03it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 2 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1110/1110 [03:44<00:00,  4.94it/s]
+Fold 2 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1110/1110 [03:39<00:00,  5.07it/s]
+Fold 2 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1110/1110 [03:44<00:00,  4.94it/s]
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1531: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 3 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1094/1094 [03:36<00:00,  5.06it/s]
+Fold 3 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1094/1094 [03:41<00:00,  4.94it/s]
+Fold 3 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1094/1094 [03:34<00:00,  5.09it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 4 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1085/1085 [03:39<00:00,  4.94it/s]
+Fold 4 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1085/1085 [03:38<00:00,  4.98it/s]
+Fold 4 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1085/1085 [03:36<00:00,  5.01it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 5 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1123/1123 [03:47<00:00,  4.94it/s]
+Fold 5 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1123/1123 [03:41<00:00,  5.06it/s]
+Fold 5 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1123/1123 [03:46<00:00,  4.95it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 6 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1110/1110 [03:37<00:00,  5.11it/s]
+Fold 6 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1110/1110 [03:44<00:00,  4.93it/s]
+Fold 6 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1110/1110 [03:40<00:00,  5.04it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 7 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1105/1105 [03:44<00:00,  4.93it/s]
+Fold 7 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1105/1105 [03:43<00:00,  4.95it/s]
+Fold 7 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1105/1105 [03:39<00:00,  5.04it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 8 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1088/1088 [03:37<00:00,  5.01it/s]
+Fold 8 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1088/1088 [03:35<00:00,  5.05it/s]
+Fold 8 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1088/1088 [03:39<00:00,  4.95it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 9 Epoch 1: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1083/1083 [03:38<00:00,  4.97it/s]
+Fold 9 Epoch 2: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1083/1083 [03:38<00:00,  4.96it/s]
+Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▍            Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▍            Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▌            Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▋            Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▊            Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▊            Fold 9 Epoch 3:  48%|██████████████████████████████████████████████▉            Fold 9 Epoch 3:  48%|███████████████████████████████████████████████            Fold 9 Epoch 3:  49%|███████████████████████████████████████████████            Fold 9 Epoch 3:  49%|███████████████████████████████████████████████▏           Fold 9 Epoch 3:  49%|███████████████████████████████████████████████▎           Fold 9 Epoch 3:  49%|███████████████████████████████████████████████▍           Fold 9 Epoch 3:  49%|███████████████████████████████████████████████▍           Fold 9 Epoch 3:  49%|███████████████████████████████████████████████▌           Fold 9 Epoch 3:  49%|███████████████████████████████████████████████▋           Fold 9 Epoch 3: 100%|████████████████████████████████████████████████████████████████████████████████████████████████| 1083/1083 [03:40<00:00,  4.92it/s]
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/suyamoon/data/miniconda3/envs/argmining/lib/python3.12/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Fold 10 Epoch 1: 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 1101/1101 [03:30<00:00,  5.23it/s]
+Fold 10 Epoch 2: 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 1101/1101 [03:44<00:00,  4.90it/s]
+Fold 10 Epoch 3: 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 1101/1101 [03:38<00:00,  5.04it/s]
+
+Cross-validation completed! Results saved in: results_20250418_021856
