@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 import numpy as np
@@ -29,13 +29,13 @@ class Config:
     EPOCHS = 3
     MODELS = {
         # "BERT": "bert-base-uncased",
+        # "InCaseLawBERT": "law-ai/InCaseLawBERT",
         "LegalBERT": "nlpaueb/legal-bert-base-uncased",
-        "InCaseLawBERT": "law-ai/InCaseLawBERT",
         "RoBERTa": "roberta-base"
     }
     MAX_SEQ_LENGTH = 512
     FOCAL_PARAMS = {"gamma": 2.0, "alpha": None}
-    REGULARIZATION = {"dropout_rate": 0.5, "weight_decay": 0.1}
+    REGULARIZATION = {"dropout_rate": 0.3, "weight_decay": 0.1}
 
 set_seed(Config.SEED)
 np.random.seed(Config.SEED)
