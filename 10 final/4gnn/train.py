@@ -16,10 +16,10 @@ import torch.nn.functional as F
 import json
 
 # Configuration
-GRAPH_DATA_DIR = Path("graph_data")
+GRAPH_DATA_DIR = Path("graph_data_4")
 NUM_FOLDS = 10
 SEED = 42
-EPOCHS = 50
+EPOCHS = 10
 BATCH_SIZE = 4
 
 # Set device

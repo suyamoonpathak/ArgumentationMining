@@ -3,7 +3,7 @@ import re
 import pandas as pd
 
 # Define the root directory (change this to your actual root folder path)
-root_dir = '.'  # Update this as needed
+root_dir = './GNN4_10_epochs'  # Update this as needed
 
 # Prepare a list to store results
 data = []
@@ -41,4 +41,4 @@ for model_name in os.listdir(root_dir):
 
 # Create DataFrame and save to CSV
 results_df = pd.DataFrame(data)
-results_df.to_csv('classification_report_summary.csv', index=False)
+results_df.to_csv('classification_report_summary_6_10_epochs.csv', index=False)
