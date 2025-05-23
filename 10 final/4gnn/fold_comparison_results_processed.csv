@@ -1,0 +1,11 @@
+model_name,fold_number,accuracy,f1_score_macro_avg
+GNN_processed_embeddings,1,0.8960,0.7735
+GNN_processed_embeddings,2,0.9983,0.9867
+GNN_processed_embeddings,3,0.9871,0.9033
+GNN_processed_embeddings,4,0.9938,0.9577
+GNN_processed_embeddings,5,0.9431,0.8249
+GNN_processed_embeddings,6,0.9848,0.8926
+GNN_processed_embeddings,7,0.9965,0.9681
+GNN_processed_embeddings,8,0.9981,0.8882
+GNN_processed_embeddings,9,0.9903,0.8689
+GNN_processed_embeddings,10,0.9804,0.8961

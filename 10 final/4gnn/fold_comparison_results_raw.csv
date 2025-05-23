@@ -1,0 +1,11 @@
+model_name,fold_number,accuracy,f1_score_macro_avg
+GNN_raw_embeddings,1,0.9283,0.8868
+GNN_raw_embeddings,2,0.9955,0.9744
+GNN_raw_embeddings,3,0.9855,0.9306
+GNN_raw_embeddings,4,0.9937,0.9609
+GNN_raw_embeddings,5,0.9737,0.9133
+GNN_raw_embeddings,6,0.9883,0.9081
+GNN_raw_embeddings,7,0.9957,0.9681
+GNN_raw_embeddings,8,0.9980,0.6660
+GNN_raw_embeddings,9,0.9915,0.8861
+GNN_raw_embeddings,10,0.9743,0.9110

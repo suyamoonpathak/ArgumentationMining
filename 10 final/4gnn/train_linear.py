@@ -10,7 +10,6 @@ from sklearn.metrics import precision_recall_fscore_support, classification_repo
 from torch_geometric.data import Data
 from tqdm import tqdm
 from pathlib import Path
-from torch_geometric.nn import RGCNConv
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch.nn.functional as F
 import json
@@ -183,13 +182,16 @@ class FocalLoss(torch.nn.Module):
         focal_loss = (1 - pt) ** self.gamma * ce_loss
         return focal_loss.mean() if self.reduction == 'mean' else focal_loss.sum()
 
-class EnhancedLegalRGCN(torch.nn.Module):
+class SimpleMLP(torch.nn.Module):
     def __init__(self, in_channels=770, hidden_channels=64, num_relations=3, dropout=0.5):
         super().__init__()
-        self.conv1 = RGCNConv(in_channels, hidden_channels, num_relations)
-        self.conv2 = RGCNConv(hidden_channels, hidden_channels, num_relations)
-        self.conv3 = RGCNConv(hidden_channels, hidden_channels, num_relations)
         
+        # Replace RGCNConv layers with Linear layers
+        self.conv1 = torch.nn.Linear(in_channels, hidden_channels)
+        self.conv2 = torch.nn.Linear(hidden_channels, hidden_channels)
+        self.conv3 = torch.nn.Linear(hidden_channels, hidden_channels)
+        
+        # Keep the same classifier structure
         self.classifier = torch.nn.Sequential(
             torch.nn.Linear(2*hidden_channels, hidden_channels),
             torch.nn.ReLU(),
@@ -202,17 +204,20 @@ class EnhancedLegalRGCN(torch.nn.Module):
         self.dropout = dropout
 
     def forward(self, x, edge_index, edge_type):
-        x1 = F.relu(self.conv1(x, edge_index, edge_type))
+        # Apply linear transformations instead of graph convolutions
+        x1 = F.relu(self.conv1(x))
         x1 = F.dropout(x1, p=self.dropout, training=self.training)
         
-        x2 = F.relu(self.conv2(x1, edge_index, edge_type))
+        x2 = F.relu(self.conv2(x1))
         x2 = F.dropout(x2, p=self.dropout, training=self.training)
         
-        x3 = self.conv3(x2, edge_index, edge_type) + x1  # Skip connection
+        x3 = self.conv3(x2) + x1  # Keep the skip connection
         
+        # Same edge feature extraction and classification
         row, col = edge_index
         edge_features = torch.cat([x3[row], x3[col]], dim=-1)
         return self.classifier(edge_features)
+
 
 def train_epoch(model, train_data, optimizer, criterion):
     model.train()
@@ -299,7 +304,7 @@ def run_cross_validation():
         train_data, val_data = train_val[val_size:], train_val[:val_size]
 
         # Initialize model
-        model = EnhancedLegalRGCN().to(device)
+        model = SimpleMLP().to(device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
         scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5)
         class_weights = calculate_balanced_class_weights(train_data)
