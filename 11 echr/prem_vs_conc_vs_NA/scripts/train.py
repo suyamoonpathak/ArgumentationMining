@@ -156,7 +156,7 @@ def main():
 
             # Initialize model
             model = AutoModelForSequenceClassification.from_pretrained(
-                checkpoint, num_labels=2,
+                checkpoint, num_labels=3,
                 hidden_dropout_prob=Config.REGULARIZATION["dropout_rate"],
                 attention_probs_dropout_prob=Config.REGULARIZATION["dropout_rate"]
             )
@@ -183,9 +183,10 @@ def main():
                 train_dataset=tokenized_train.select(train_idx),
                 eval_dataset=tokenized_train.select(val_idx),
                 compute_metrics=lambda p: {
-                    "f1": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="binary"),
-                    "roc_auc": roc_auc_score(p.label_ids, F.softmax(torch.tensor(p.predictions), dim=1)[:, 1].numpy())
-                },
+                    "f1": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="macro"),  # or "weighted"
+                    "accuracy": accuracy_score(p.label_ids, np.argmax(p.predictions, axis=1))
+                }
+
                 callbacks=[loss_history]
             )
             
@@ -232,9 +233,9 @@ def save_results(true, pred, probs, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
     metrics = {
         "accuracy": accuracy_score(true, pred),
-        "precision": precision_score(true, pred, average="binary"),
-        "recall": recall_score(true, pred, average="binary"),
-        "f1": f1_score(true, pred, average="binary")
+        "precision": precision_score(true, pred, average="macro"),  # changed from "binary"
+        "recall": recall_score(true, pred, average="macro"),        # changed from "binary"
+        "f1": f1_score(true, pred, average="macro")                # changed from "binary"
     }
     with open(out_dir / "metrics.json", "w") as f:
         json.dump(metrics, f)
@@ -243,7 +244,7 @@ def save_results(true, pred, probs, out_dir):
     report = classification_report(
         true, 
         pred, 
-        target_names=["Conclusion", "Premise"],
+        target_names=["Conclusion", "Premise", "NA"],
         digits=4
     )
     with open(out_dir / "classification_report.txt", "w") as f:
