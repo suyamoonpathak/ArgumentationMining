@@ -1,0 +1,16 @@
+Classification Report
+==================================================
+Model Path: ./BERT_best_model
+Test Data Path: ../../data
+Total Samples: 10456
+Label Mapping: {'non-argumentative': 0, 'argumentative': 1}
+Accuracy: 0.7605
+
+                   precision    recall  f1-score   support
+
+non-argumentative     0.7937    0.9152    0.8502      7762
+    argumentative     0.5631    0.3148    0.4038      2694
+
+         accuracy                         0.7605     10456
+        macro avg     0.6784    0.6150    0.6270     10456
+     weighted avg     0.7343    0.7605    0.7352     10456

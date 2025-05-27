@@ -20,7 +20,7 @@ import seaborn as sns
 # Configure paths
 SCRIPT_DIR = Path(__file__).parent.resolve()
 DATA_DIR = SCRIPT_DIR.parent / "data"
-RESULTS_DIR = SCRIPT_DIR.parent / "results"
+RESULTS_DIR = SCRIPT_DIR.parent / "DATA5/2 prem_vs_conc results/results_second_run"
 
 class Config:
     SEED = 42
@@ -165,15 +165,18 @@ def main():
             training_args = TrainingArguments(
                 output_dir=RESULTS_DIR / model_name / f"fold_{fold+1}",
                 evaluation_strategy="epoch",
-                save_strategy="no",
+                save_strategy="epoch",  # ADD THIS LINE
+                load_best_model_at_end=True,  # ADD THIS LINE
                 per_device_train_batch_size=Config.BATCH_SIZE,
                 per_device_eval_batch_size=Config.BATCH_SIZE,
                 num_train_epochs=Config.EPOCHS,
                 weight_decay=Config.REGULARIZATION["weight_decay"],
-                metric_for_best_model="f1",
-                greater_is_better=True,
+                metric_for_best_model="eval_loss",  # CHANGE FROM "f1" TO "eval_loss"
+                greater_is_better=False,  # CHANGE FROM True TO False
+                save_total_limit=1,  # ADD THIS LINE (optional - keeps only 2 best checkpoints)
                 seed=Config.SEED
             )
+
             
             loss_history = LossHistoryCallback()
 
@@ -191,6 +194,10 @@ def main():
             
             trainer.train()
             
+            best_model_path = Path(training_args.output_dir) / "best_model"
+            trainer.save_model(str(best_model_path))
+            tokenizer.save_pretrained(str(best_model_path))
+
             final_train_metrics = trainer.evaluate(tokenized_train.select(train_idx))
             if "eval_loss" in final_train_metrics:
                 loss_history.train_loss.append(final_train_metrics["eval_loss"])

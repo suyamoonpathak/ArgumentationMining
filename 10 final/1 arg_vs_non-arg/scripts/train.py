@@ -27,7 +27,7 @@ import json
 SCRIPT_DIR = Path(__file__).parent.resolve()
 DATA_DIR = SCRIPT_DIR.parent / "data"
 ALL_DATA_DIR = DATA_DIR / "all"  # New directory containing all 40 files
-RESULTS_DIR = SCRIPT_DIR.parent / "results"
+RESULTS_DIR = SCRIPT_DIR.parent / "DATA5/1 arg_vs_non-arg results/results_10_folds_second_run"
 
 # Set global seeds for reproducibility
 SEED = 42

@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 
 import numpy as np
@@ -8,7 +8,7 @@ from pathlib import Path
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, RocCurveDisplay
 from sklearn.model_selection import StratifiedKFold
 from datasets import load_dataset, Dataset, ClassLabel
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer, TrainerCallback, set_seed
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer, TrainerCallback, EarlyStoppingCallback, set_seed
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, roc_auc_score
 from sklearn.metrics import confusion_matrix
@@ -26,12 +26,12 @@ class Config:
     SEED = 42
     NUM_FOLDS = 10
     BATCH_SIZE = 4
-    EPOCHS = 3
+    EPOCHS = 10
     MODELS = {
-        "BERT": "bert-base-uncased",
+        # "BERT": "bert-base-uncased",
         "InCaseLawBERT": "law-ai/InCaseLawBERT",
-        "LegalBERT": "nlpaueb/legal-bert-base-uncased",
-        "RoBERTa": "roberta-base"
+        # "LegalBERT": "nlpaueb/legal-bert-base-uncased",
+        # "RoBERTa": "roberta-base"
     }
     MAX_SEQ_LENGTH = 512
     FOCAL_PARAMS = {"gamma": 2.0, "alpha": None}
@@ -165,17 +165,20 @@ def main():
             training_args = TrainingArguments(
                 output_dir=RESULTS_DIR / model_name / f"fold_{fold+1}",
                 evaluation_strategy="epoch",
-                save_strategy="no",
+                save_strategy="epoch",  # Changed from "no" to "epoch"
                 per_device_train_batch_size=Config.BATCH_SIZE,
                 per_device_eval_batch_size=Config.BATCH_SIZE,
                 num_train_epochs=Config.EPOCHS,
                 weight_decay=Config.REGULARIZATION["weight_decay"],
                 metric_for_best_model="f1",
                 greater_is_better=True,
+                load_best_model_at_end=True,  # Required for EarlyStoppingCallback
                 seed=Config.SEED
             )
+
             
             loss_history = LossHistoryCallback()
+            early_stopping = EarlyStoppingCallback(early_stopping_patience=2)
 
             trainer = FocalLossTrainer(
                 model=model,
@@ -183,12 +186,12 @@ def main():
                 train_dataset=tokenized_train.select(train_idx),
                 eval_dataset=tokenized_train.select(val_idx),
                 compute_metrics=lambda p: {
-                    "f1": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="macro"),  # or "weighted"
+                    "f1": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="macro"),
                     "accuracy": accuracy_score(p.label_ids, np.argmax(p.predictions, axis=1))
-                }
-
-                callbacks=[loss_history]
+                },
+                callbacks=[loss_history, early_stopping]  # Added early_stopping callback
             )
+
             
             trainer.train()
             
@@ -203,7 +206,6 @@ def main():
             )
 
 
-            
             # Save results
             preds = trainer.predict(tokenized_test)
             probs = F.softmax(torch.tensor(preds.predictions), dim=1).numpy()
@@ -211,14 +213,12 @@ def main():
 
 def plot_confusion_matrix(y_true, y_pred, output_path):
     cm = confusion_matrix(y_true, y_pred)
-    cell_labels = np.array([
-        [f"(TP)\n{cm[0,0]}", f"(FN)\n{cm[0,1]}"],
-        [f"(FP)\n{cm[1,0]}", f"(TN)\n{cm[1,1]}"]
-    ])
+    cell_labels = np.array([[str(cell) for cell in row] for row in cm])
+    
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm, annot=cell_labels, fmt='', cmap="Blues",
-                xticklabels=["Predicted Conclusion", "Predicted Premise"],
-                yticklabels=["Actual Conclusion", "Actual Premise"])
+                xticklabels=["Predicted Conclusion", "Predicted Premise", "Predicted NA"],
+                yticklabels=["Actual Conclusion", "Actual Premise", "Actual NA"])
     plt.xlabel('Prediction')
     plt.ylabel('Ground Truth')
     plt.title('Confusion Matrix for Argumentative Classification')
@@ -229,13 +229,14 @@ def plot_confusion_matrix(y_true, y_pred, output_path):
 
 
 
+
 def save_results(true, pred, probs, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
     metrics = {
         "accuracy": accuracy_score(true, pred),
-        "precision": precision_score(true, pred, average="macro"),  # changed from "binary"
-        "recall": recall_score(true, pred, average="macro"),        # changed from "binary"
-        "f1": f1_score(true, pred, average="macro")                # changed from "binary"
+        "precision": precision_score(true, pred, average="macro"),  
+        "recall": recall_score(true, pred, average="macro"),       
+        "f1": f1_score(true, pred, average="macro")                
     }
     with open(out_dir / "metrics.json", "w") as f:
         json.dump(metrics, f)

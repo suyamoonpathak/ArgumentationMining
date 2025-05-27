@@ -1,8 +1,0 @@
-                   precision    recall  f1-score   support
-
-Non-Argumentative       0.91      0.87      0.89       397
-    Argumentative       0.77      0.82      0.79       204
-
-         accuracy                           0.86       601
-        macro avg       0.84      0.85      0.84       601
-     weighted avg       0.86      0.86      0.86       601
