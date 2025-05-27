@@ -23,7 +23,8 @@ from transformers import (
     TrainingArguments,
     Trainer,
     TrainerCallback,
-    set_seed
+    set_seed,
+    EarlyStoppingCallback
 )
 import matplotlib.pyplot as plt
 import json
