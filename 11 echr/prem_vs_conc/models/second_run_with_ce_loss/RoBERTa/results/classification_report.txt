@@ -1,0 +1,16 @@
+Classification Report
+==================================================
+Model Path: ./RoBERTa_best_model
+Test Data Path: ../../../data
+Total Samples: 2694
+Label Mapping: {'conclusion': 0, 'premise': 1}
+Accuracy: 0.7238
+
+              precision    recall  f1-score   support
+
+  conclusion     0.4000    0.0027    0.0053       743
+     premise     0.7244    0.9985    0.8397      1951
+
+    accuracy                         0.7238      2694
+   macro avg     0.5622    0.5006    0.4225      2694
+weighted avg     0.6350    0.7238    0.6096      2694

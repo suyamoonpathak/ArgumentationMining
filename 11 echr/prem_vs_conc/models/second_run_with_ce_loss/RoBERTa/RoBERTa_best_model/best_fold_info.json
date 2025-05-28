@@ -1,0 +1,9 @@
+{
+  "best_fold": 6,
+  "best_f1_score": 0.9945945945945946,
+  "model_name": "RoBERTa",
+  "class_weights": [
+    1.8763304948806763,
+    0.12366954237222672
+  ]
+}
