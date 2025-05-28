@@ -1,0 +1,17 @@
+Classification Report
+==================================================
+Model Path: ./InCaseLawBERT_best_model
+Test Data Path: ../../data
+Total Samples: 10456
+Label Mapping: {'non-argumentative': 0, 'premise': 1, 'conclusion': 2}
+Accuracy: 0.7436
+
+                   precision    recall  f1-score   support
+
+non-argumentative     0.7964    0.9205    0.8540      7762
+          premise     0.4176    0.3116    0.3569      1951
+       conclusion     0.7857    0.0296    0.0571       743
+
+         accuracy                         0.7436     10456
+        macro avg     0.6666    0.4206    0.4226     10456
+     weighted avg     0.7249    0.7436    0.7046     10456
