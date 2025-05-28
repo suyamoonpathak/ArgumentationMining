@@ -1,0 +1,16 @@
+Classification Report
+==================================================
+Model Path: ./RoBERTa_best_model
+Test Data Path: ../../data
+Total Samples: 10456
+Label Mapping: {'non-argumentative': 0, 'argumentative': 1}
+Accuracy: 0.7612
+
+                   precision    recall  f1-score   support
+
+non-argumentative     0.7981    0.9080    0.8495      7762
+    argumentative     0.5606    0.3382    0.4219      2694
+
+         accuracy                         0.7612     10456
+        macro avg     0.6794    0.6231    0.6357     10456
+     weighted avg     0.7369    0.7612    0.7393     10456
