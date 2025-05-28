@@ -1,0 +1,16 @@
+Classification Report
+==================================================
+Model Path: ./LegalBERT_best_model
+Test Data Path: ../../data
+Total Samples: 10456
+Label Mapping: {'non-argumentative': 0, 'argumentative': 1}
+Accuracy: 0.7681
+
+                   precision    recall  f1-score   support
+
+non-argumentative     0.7767    0.9651    0.8607      7762
+    argumentative     0.6658    0.2004    0.3081      2694
+
+         accuracy                         0.7681     10456
+        macro avg     0.7213    0.5828    0.5844     10456
+     weighted avg     0.7481    0.7681    0.7183     10456

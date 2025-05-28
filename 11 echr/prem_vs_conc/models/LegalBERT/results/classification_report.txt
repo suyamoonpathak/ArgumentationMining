@@ -1,0 +1,16 @@
+Classification Report
+==================================================
+Model Path: ./LegalBERT_best_model_fold3
+Test Data Path: ../../data
+Total Samples: 2694
+Label Mapping: {'conclusion': 0, 'premise': 1}
+Accuracy: 0.7372
+
+              precision    recall  f1-score   support
+
+  conclusion     0.8070    0.0619    0.1150       743
+     premise     0.7357    0.9944    0.8457      1951
+
+    accuracy                         0.7372      2694
+   macro avg     0.7714    0.5281    0.4803      2694
+weighted avg     0.7554    0.7372    0.6442      2694

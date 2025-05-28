@@ -1,0 +1,16 @@
+Classification Report
+==================================================
+Model Path: ./InCaseLawBERT_best_model_fold3
+Test Data Path: ../../data
+Total Samples: 2694
+Label Mapping: {'conclusion': 0, 'premise': 1}
+Accuracy: 0.7350
+
+              precision    recall  f1-score   support
+
+  conclusion     0.8372    0.0485    0.0916       743
+     premise     0.7333    0.9964    0.8449      1951
+
+    accuracy                         0.7350      2694
+   macro avg     0.7853    0.5224    0.4682      2694
+weighted avg     0.7620    0.7350    0.6371      2694
