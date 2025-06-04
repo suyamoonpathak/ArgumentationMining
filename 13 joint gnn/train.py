@@ -38,25 +38,20 @@ def load_graph_data():
     return [torch.load(f, weights_only=False) for f in all_files]  
 
 
-def calculate_balanced_weights(data_list, device='cpu'):
-    """Calculate class weights for both edge and node tasks"""
-    # Initialize on specified device
-    edge_counts = torch.zeros(3, device=device)
-    node_counts = torch.zeros(2, device=device)
+def calculate_balanced_weights(data_list, device='cpu', eps=1e-8):
+    """Add smoothing to prevent zero counts"""
+    edge_counts = torch.ones(3, device=device) * eps
+    node_counts = torch.ones(2, device=device) * eps
     
     for data in data_list:
-        # Move tensors to target device before processing
         edge_counts += torch.bincount(data.edge_type.to(device), minlength=3)
         node_counts += torch.bincount(data.y.to(device), minlength=2)
         
-    # Handle division by zero safely
-    edge_weights = (edge_counts.sum() / (3 * edge_counts)).nan_to_num(0)
-    node_weights = (node_counts.sum() / (2 * node_counts)).nan_to_num(0)
-    
-    print(f"Edge weights: {edge_weights.cpu().tolist()}")
-    print(f"Node weights: {node_weights.cpu().tolist()}")
+    edge_weights = edge_counts.sum() / (3 * edge_counts)
+    node_weights = node_counts.sum() / (2 * node_counts)
     
     return edge_weights, node_weights
+
 
 
 
@@ -155,23 +150,77 @@ def save_joint_results(edge_data, node_data, out_dir):
     e_true, e_pred = edge_data
     n_true, n_pred = node_data
     
+    # Create subdirectories
+    edge_dir = out_dir / "edges"
+    node_dir = out_dir / "nodes"
+    edge_dir.mkdir(parents=True, exist_ok=True)
+    node_dir.mkdir(parents=True, exist_ok=True)
+
     # Save edge reports
-    save_results(e_true, e_pred, out_dir/"edges")
+    _save_task_results(
+        e_true, e_pred,
+        target_names=["Support", "Attack", "No Relation"],
+        labels=[0, 1, 2],
+        output_dir=edge_dir
+    )
     
     # Save node reports
-    node_metrics = {
-        "accuracy": accuracy_score(n_true, n_pred),
-        "f1": f1_score(n_true, n_pred, average="macro")
-    }
-    with open(out_dir/"nodes_metrics.json", "w") as f:
-        json.dump(node_metrics, f, indent=2)
-        
-    node_report = classification_report(
+    _save_task_results(
         n_true, n_pred,
-        target_names=["Premise", "Conclusion"]
+        target_names=["Premise", "Conclusion"],
+        labels=[0, 1],
+        output_dir=node_dir
     )
-    with open(out_dir/"nodes_report.txt", "w") as f:
-        f.write(node_report)
+
+def _save_task_results(true, pred, target_names, labels, output_dir):
+    """Helper function to save results for a single task"""
+    # Classification report
+    report = classification_report(
+        true, pred,
+        labels=labels,
+        target_names=target_names,
+        output_dict=True,
+        zero_division=0
+    )
+    
+    # Save JSON report
+    with open(output_dir / "metrics.json", "w") as f:
+        json.dump(report, f, indent=2)
+        
+    # Save text report
+    txt_report = classification_report(
+        true, pred,
+        labels=labels,
+        target_names=target_names,
+        digits=4,
+        zero_division=0
+    )
+    with open(output_dir / "report.txt", "w") as f:
+        f.write(txt_report)
+    
+    # Confusion matrix
+    _plot_confusion_matrix(
+        true, pred,
+        labels=labels,
+        target_names=target_names,
+        output_path=output_dir / "confusion_matrix.png"
+    )
+
+def _plot_confusion_matrix(y_true, y_pred, labels, target_names, output_path):
+    """Generic confusion matrix plotter"""
+    cm = confusion_matrix(y_true, y_pred, labels=labels)
+    
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+                xticklabels=target_names,
+                yticklabels=target_names)
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+
 
 
 # Add this class before your existing functions
@@ -222,15 +271,15 @@ class FocalLoss(torch.nn.Module):
 class EnhancedLegalRGCN(torch.nn.Module):
     def __init__(self, in_channels=770, hidden_channels=64, num_relations=3, dropout=DROPOUT_RATE):
         super().__init__()
-        # Shared Encoder with BatchNorm
+        # Remove BatchNorm due to small batch sizes
         self.conv1 = RGCNConv(in_channels, hidden_channels, num_relations)
-        self.bn1 = torch.nn.BatchNorm1d(hidden_channels)
         self.conv2 = RGCNConv(hidden_channels, hidden_channels, num_relations)
-        self.bn2 = torch.nn.BatchNorm1d(hidden_channels)
         self.conv3 = RGCNConv(hidden_channels, hidden_channels, num_relations)
-        self.bn3 = torch.nn.BatchNorm1d(hidden_channels)
         
-        # Classifiers with higher dropout
+        # Add LayerNorm for stability
+        self.norm = torch.nn.LayerNorm(hidden_channels)
+        
+        # Classifiers with weight initialization
         self.edge_classifier = torch.nn.Sequential(
             torch.nn.Linear(2*hidden_channels, hidden_channels),
             torch.nn.ReLU(),
@@ -243,20 +292,26 @@ class EnhancedLegalRGCN(torch.nn.Module):
             torch.nn.Dropout(dropout),
             torch.nn.Linear(hidden_channels//2, 2)
         )
+        
+        # Initialize weights properly
+        for m in self.modules():
+            if isinstance(m, torch.nn.Linear):
+                torch.nn.init.kaiming_normal_(m.weight, nonlinearity='relu')
+                torch.nn.init.constant_(m.bias, 0)
 
     def forward(self, x, edge_index, edge_type):
-        # Shared Encoding with BN
-        x1 = F.relu(self.bn1(self.conv1(x, edge_index, edge_type)))
-        x2 = F.relu(self.bn2(self.conv2(x1, edge_index, edge_type)))
-        x3 = self.bn3(self.conv3(x2, edge_index, edge_type)) + x1  # Skip connection
+        # Shared Encoding with residual connections
+        x1 = F.relu(self.conv1(x, edge_index, edge_type))
+        x2 = F.relu(self.conv2(x1, edge_index, edge_type))
+        x3 = self.norm(self.conv3(x2, edge_index, edge_type) + x1)
         
-        # Edge Classification
+        # Edge Classification with log softmax for stability
         row, col = edge_index
         edge_features = torch.cat([x3[row], x3[col]], dim=-1)
-        edge_out = self.edge_classifier(edge_features)
+        edge_out = F.log_softmax(self.edge_classifier(edge_features), dim=-1)
         
         # Node Classification
-        node_out = self.node_classifier(x3)
+        node_out = F.log_softmax(self.node_classifier(x3), dim=-1)
         
         return edge_out, node_out
 
@@ -264,14 +319,16 @@ class EnhancedLegalRGCN(torch.nn.Module):
 class MultiTaskLoss(torch.nn.Module):
     def __init__(self, edge_weights, node_weights, alpha=0.6):
         super().__init__()
-        self.edge_criterion = FocalLoss(weight=edge_weights)
-        self.node_criterion = FocalLoss(weight=node_weights)
-        self.alpha = alpha  # Weight between edge/node tasks
+        # Use NLLLoss with log softmax outputs
+        self.edge_criterion = torch.nn.NLLLoss(weight=edge_weights)
+        self.node_criterion = torch.nn.NLLLoss(weight=node_weights)
+        self.alpha = alpha
 
     def forward(self, edge_pred, edge_true, node_pred, node_true):
         edge_loss = self.edge_criterion(edge_pred, edge_true)
         node_loss = self.node_criterion(node_pred, node_true)
         return self.alpha * edge_loss + (1 - self.alpha) * node_loss
+
 
 
 def train_epoch(model, train_data, optimizer, criterion):
@@ -280,13 +337,17 @@ def train_epoch(model, train_data, optimizer, criterion):
     valid_batches = 0
     
     for data in train_data:
+        data = data.to(device)
+
         if data.edge_index.size(1) == 0:
             continue
             
-        # Edge Dropout Regularization
+        # Safer edge dropout
         if model.training and EDGE_DROPOUT_RATE > 0:
             num_edges = data.edge_index.size(1)
-            mask = torch.rand(num_edges) > EDGE_DROPOUT_RATE
+            mask = torch.rand(num_edges, device=device) > EDGE_DROPOUT_RATE
+            if mask.sum() == 0:  # Keep at least one edge
+                mask[0] = True
             data.edge_index = data.edge_index[:, mask]
             data.edge_type = data.edge_type[mask]
             
@@ -296,14 +357,19 @@ def train_epoch(model, train_data, optimizer, criterion):
         edge_pred, node_pred = model(data.x, data.edge_index, data.edge_type)
         loss = criterion(edge_pred, data.edge_type, node_pred, data.y)
         
+        # Check for valid loss
+        if torch.isnan(loss):
+            continue
+            
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)  # Tighter gradient clipping
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)  # Adjusted clipping
         optimizer.step()
         
         total_loss += loss.item()
         valid_batches += 1
         
     return total_loss / max(1, valid_batches)
+
 
 
 
