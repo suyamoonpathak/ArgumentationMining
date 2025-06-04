@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import numpy as np
 import torch
@@ -23,8 +23,10 @@ from transformers import (
     Trainer,
     TrainerCallback,
     set_seed,
-    EarlyStoppingCallback
 )
+
+from torch.nn import functional as F
+
 import matplotlib.pyplot as plt
 import json
 
@@ -33,8 +35,46 @@ from pathlib import Path
 # Get absolute paths based on script location
 SCRIPT_DIR = Path(__file__).parent.resolve()
 DATA_DIR = SCRIPT_DIR.parent / "data"
-ALL_DATA_DIR = DATA_DIR / "train"
-RESULTS_DIR = SCRIPT_DIR.parent / "DATA5/1 arg_vs_non-arg results/results_fifth_run"
+ALL_DATA_DIR = DATA_DIR / "all"
+RESULTS_DIR = SCRIPT_DIR.parent / "DATA5/3 prem_vs_conc_na results/second_run_using_focal_loss"
+# Focal Loss Configuration
+FOCAL_PARAMS = {"gamma": 2.0, "alpha": None}
+REGULARIZATION = {"dropout_rate": 0.3, "weight_decay": 0.1}
+
+class FocalLossTrainer(Trainer):
+    def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
+        labels = inputs.pop("labels")
+        outputs = model(**inputs)
+        logits = outputs.logits
+        
+        # Convert labels to long tensor
+        labels = labels.long()
+        
+        # Calculate Focal Loss
+        ce_loss = F.cross_entropy(
+            logits, 
+            labels, 
+            reduction='none',
+            weight=FOCAL_PARAMS["alpha"].to(labels.device) if FOCAL_PARAMS["alpha"] is not None else None
+        )
+        
+        pt = torch.exp(-ce_loss)
+        focal_loss = ((1 - pt) ** FOCAL_PARAMS["gamma"] * ce_loss).mean()
+        
+        return (focal_loss, outputs) if return_outputs else focal_loss
+class LossHistoryCallback(TrainerCallback):
+    def __init__(self):
+        super().__init__()
+        self.train_loss = []
+        self.val_loss = []
+    
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        if logs:
+            if "loss" in logs:
+                self.train_loss.append(logs["loss"])
+            if "eval_loss" in logs:
+                self.val_loss.append(logs["eval_loss"])
+
 
 # Set global seeds for reproducibility
 SEED = 42
@@ -72,13 +112,16 @@ class LoggingCallback(TrainerCallback):
                 f.write(f"Step {state.global_step}\n")
                 f.write(f"Logs: {logs}\n\n")
 
-# Metrics and visualization functions (keeping your existing functions)
+# Metrics and visualization functions (updated for three-way classification)
 def save_metrics(predictions, labels, output_dir):
     metrics = {
         "accuracy": accuracy_score(labels, predictions),
-        "precision": precision_score(labels, predictions, average="binary"),
-        "recall": recall_score(labels, predictions, average="binary"),
-        "f1": f1_score(labels, predictions, average="binary")
+        "precision_macro": precision_score(labels, predictions, average="macro"),
+        "precision_weighted": precision_score(labels, predictions, average="weighted"),
+        "recall_macro": recall_score(labels, predictions, average="macro"),
+        "recall_weighted": recall_score(labels, predictions, average="weighted"),
+        "f1_macro": f1_score(labels, predictions, average="macro"),
+        "f1_weighted": f1_score(labels, predictions, average="weighted")
     }
 
     with open(f"{output_dir}/metrics.json", "w") as f:
@@ -89,7 +132,7 @@ def save_metrics(predictions, labels, output_dir):
 def save_classification_report(predictions, labels, output_dir):
     report = classification_report(
         labels, predictions,
-        target_names=["Non-Argumentative", "Argumentative"]
+        target_names=["Non-Argumentative", "Premise", "Conclusion"]
     )
 
     with open(f"{output_dir}/classification_report.txt", "w") as f:
@@ -97,73 +140,42 @@ def save_classification_report(predictions, labels, output_dir):
 
 def plot_confusion_matrix(y_true, y_pred, output_path):
     cm = confusion_matrix(y_true, y_pred)
-
-    labels = np.array([
-        ['(TP)', '(FN)'],
-        ['(FP)', '(TN)']
-    ])
-
-    # Fix: Create annotation array properly
-    annot = np.empty_like(labels, dtype=object)
-    for i in range(labels.shape[0]):
-        for j in range(labels.shape[1]):
-            annot[i, j] = f"{labels[i, j]}\n{cm[i, j]}"
-
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=annot, fmt='', cmap="Blues",
-                xticklabels=["Predicted Arg", "Predicted Non-Arg"],
-                yticklabels=["Actual Arg", "Actual Non-Arg"])
-    plt.xlabel('Prediction')
-    plt.ylabel('Ground Truth')
-    plt.title('Confusion Matrix for Argumentative Classification')
+    
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', cmap="Blues",
+                xticklabels=["Non-Argumentative", "Premise", "Conclusion"],
+                yticklabels=["Non-Argumentative", "Premise", "Conclusion"])
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix for Three-Way Classification')
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
 
-def plot_loss_curves(log_history, output_dir):
-    train_loss = []
-    eval_loss = []
-
-    current_epoch = -1
-    epoch_train_losses = []
-
-    for log in log_history:
-        if 'loss' in log and 'epoch' in log:
-            epoch = int(log['epoch'])
-            if epoch > current_epoch:
-                if epoch_train_losses: 
-                    train_loss.append(np.mean(epoch_train_losses))
-                current_epoch = epoch
-                epoch_train_losses = []
-            epoch_train_losses.append(log['loss'])
-
-        elif 'eval_loss' in log:
-            eval_loss.append(log['eval_loss'])
-
-    if epoch_train_losses:
-        train_loss.append(np.mean(epoch_train_losses))
-
-    min_epochs = min(len(train_loss), len(eval_loss))
-    train_loss = train_loss[:min_epochs]
-    eval_loss = eval_loss[:min_epochs]
-
+def plot_focal_loss_curves(train_loss, val_loss, output_path):
+    min_length = min(len(train_loss), len(val_loss))
+    train_loss_clipped = train_loss[:min_length]
+    val_loss_clipped = val_loss[:min_length]
+    epochs = list(range(min_length))
+    
     plt.figure(figsize=(8, 6))
-    plt.plot(range(min_epochs), train_loss, label='Training Loss', marker='o', linestyle='-', color='b')
-    plt.plot(range(min_epochs), eval_loss, label='Validation Loss', marker='x', linestyle='--', color='orange')
-    plt.title('Training and Validation Loss Curves')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
+    plt.plot(epochs, train_loss_clipped, label='Training Loss', marker='o', linestyle='-', color='b')
+    plt.plot(epochs, val_loss_clipped, label='Validation Loss', marker='x', linestyle='--', color='orange')
+    plt.xlabel("Epoch")
+    plt.ylabel("Focal Loss")
+    plt.title("Training/Validation Focal Loss Curves")
     plt.legend()
     plt.grid(True)
-    plt.savefig(f"{output_dir}/plots/loss_curves.png")
+    plt.savefig(output_path)
     plt.close()
+
 
 # Main function
 def main():
     # Load all files from the 'all' directory
     print(ALL_DATA_DIR)
     all_files = list(ALL_DATA_DIR.glob("*.csv"))
-    assert len(all_files) == 32, f"Expected 32 files, found {len(all_files)}"
+    assert len(all_files) == 40, f"Expected 40 files, found {len(all_files)}"
 
     # Split into document-level train/test (32/8)
     train_files, test_files = train_test_split(
@@ -203,6 +215,13 @@ def main():
             remove_columns=["text"]
         ).rename_column("class", "labels")
 
+        # Calculate class weights for focal loss (add this after tokenized_train creation)
+        class_counts = np.bincount(tokenized_train["labels"])
+        FOCAL_PARAMS["alpha"] = torch.tensor([1/(c/len(tokenized_train)) for c in class_counts], dtype=torch.float32)
+        print(f"Class distribution: {class_counts}")
+        print(f"Focal loss alpha weights: {FOCAL_PARAMS['alpha']}")
+
+        
         # Document-level stratified K-Fold
         skf = StratifiedKFold(n_splits=NUM_FOLDS, shuffle=True, random_state=SEED)
 
@@ -218,13 +237,15 @@ def main():
             fold_num = fold + 1
             print(f"\nStarting Fold {fold_num} for {model_name}")
 
-            # Create fresh model instance for each fold
+            # Create fresh model instance for each fold - UPDATED FOR 3 CLASSES
+            # Create fresh model instance for each fold - UPDATED FOR 3 CLASSES + REGULARIZATION
             model = AutoModelForSequenceClassification.from_pretrained(
                 model_checkpoint,
-                num_labels=2,
-                hidden_dropout_prob=0.2,
-                attention_probs_dropout_prob=0.2
+                num_labels=3,
+                hidden_dropout_prob=REGULARIZATION["dropout_rate"],
+                attention_probs_dropout_prob=REGULARIZATION["dropout_rate"]
             )
+
 
             # Create directories
             fold_dir = create_dirs(model_name, fold_num)
@@ -233,13 +254,13 @@ def main():
             training_args = TrainingArguments(
                 output_dir=str(fold_dir / "checkpoints"),
                 evaluation_strategy="epoch",
-                save_strategy="epoch",  # Save at each epoch
+                save_strategy="epoch",
                 learning_rate=1e-5,
                 per_device_train_batch_size=BATCH_SIZE,
                 per_device_eval_batch_size=BATCH_SIZE,
                 num_train_epochs=EPOCHS,
-                weight_decay=0.3,
-                load_best_model_at_end=True,  # Load best model at end
+                weight_decay=REGULARIZATION["weight_decay"],  # Updated this line
+                load_best_model_at_end=True,
                 metric_for_best_model="eval_loss",
                 greater_is_better=False,
                 seed=SEED,
@@ -247,23 +268,34 @@ def main():
                 report_to="none",
                 max_grad_norm=0.3,
                 label_smoothing_factor=0.2,
-                save_total_limit=1,  # Keep only best 2 checkpoints
+                save_total_limit=1,
             )
 
-            trainer = Trainer(
+
+            loss_history = LossHistoryCallback()
+
+            trainer = FocalLossTrainer(  # Changed from Trainer to FocalLossTrainer
                 model=model,
                 args=training_args,
                 train_dataset=tokenized_train.select(train_idx),
                 eval_dataset=tokenized_train.select(val_idx),
                 compute_metrics=lambda p: {
                     "accuracy": accuracy_score(p.label_ids, np.argmax(p.predictions, axis=1)),
-                    "f1": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="binary")
-                }
+                    "f1_macro": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="macro"),
+                    "f1_weighted": f1_score(p.label_ids, np.argmax(p.predictions, axis=1), average="weighted")
+                },
+                callbacks=[loss_history]  # Added this line
             )
+
 
             # Train and save
             trainer.train()
-            plot_loss_curves(trainer.state.log_history, fold_dir)
+            plot_focal_loss_curves(
+                loss_history.train_loss,
+                loss_history.val_loss,
+                str(fold_dir / "plots" / "focal_loss_curves.png")
+            )
+
 
             # Generate validation reports
             val_pred = trainer.predict(tokenized_train.select(val_idx))
