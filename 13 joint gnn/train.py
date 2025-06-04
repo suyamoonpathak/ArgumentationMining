@@ -14,15 +14,19 @@ from torch_geometric.nn import RGCNConv
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch.nn.functional as F
 import json
-from sklearn.metrics import accuracy_score, f1_score, classification_report
+from sklearn.metrics import accuracy_score, f1_score
 
 # Configuration
-GRAPH_DATA_DIR = Path("graph_data_processed_embeddings")
+GRAPH_DATA_DIR = Path("graph_data_processed_for_joint_prediction")
 NUM_FOLDS = 10
 SEED = 42
-EPOCHS = 10
+EPOCHS = 20
 BATCH_SIZE = 4
 EARLY_STOPPING_PATIENCE = 2
+WEIGHT_DECAY = 1e-3  # Increased from 1e-4
+LEARNING_RATE = 5e-4  # Reduced from 1e-3
+DROPOUT_RATE = 0.5  # Increased from 0.5
+EDGE_DROPOUT_RATE = 0.5  # New regularization
 
 # Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -34,19 +38,27 @@ def load_graph_data():
     return [torch.load(f, weights_only=False) for f in all_files]  
 
 
-def calculate_balanced_weights(data_list):
-    # Edge weights
-    edge_counts = torch.zeros(3)
-    node_counts = torch.zeros(2)
+def calculate_balanced_weights(data_list, device='cpu'):
+    """Calculate class weights for both edge and node tasks"""
+    # Initialize on specified device
+    edge_counts = torch.zeros(3, device=device)
+    node_counts = torch.zeros(2, device=device)
     
     for data in data_list:
-        edge_counts += torch.bincount(data.edge_type, minlength=3)
-        node_counts += torch.bincount(data.y, minlength=2)
+        # Move tensors to target device before processing
+        edge_counts += torch.bincount(data.edge_type.to(device), minlength=3)
+        node_counts += torch.bincount(data.y.to(device), minlength=2)
         
+    # Handle division by zero safely
     edge_weights = (edge_counts.sum() / (3 * edge_counts)).nan_to_num(0)
     node_weights = (node_counts.sum() / (2 * node_counts)).nan_to_num(0)
     
+    print(f"Edge weights: {edge_weights.cpu().tolist()}")
+    print(f"Node weights: {node_weights.cpu().tolist()}")
+    
     return edge_weights, node_weights
+
+
 
 def plot_learning_curves(train_losses, val_losses, output_path, early_stop_epoch=None):
     """Create training/validation loss curves with specified style"""
@@ -194,8 +206,8 @@ class EarlyStopping:
 
 
 class FocalLoss(torch.nn.Module):
-    def __init__(self, weight=None, gamma=2.0, reduction='mean'):
-        super(FocalLoss, self).__init__()
+    def __init__(self, weight=None, gamma=1.0, reduction='mean'): 
+        super().__init__()
         self.weight = weight
         self.gamma = gamma
         self.reduction = reduction
@@ -206,35 +218,37 @@ class FocalLoss(torch.nn.Module):
         focal_loss = (1 - pt) ** self.gamma * ce_loss
         return focal_loss.mean() if self.reduction == 'mean' else focal_loss.sum()
 
+
 class EnhancedLegalRGCN(torch.nn.Module):
-    def __init__(self, in_channels=770, hidden_channels=64, num_relations=3, dropout=0.5):
+    def __init__(self, in_channels=770, hidden_channels=64, num_relations=3, dropout=DROPOUT_RATE):
         super().__init__()
-        # Shared Encoder
+        # Shared Encoder with BatchNorm
         self.conv1 = RGCNConv(in_channels, hidden_channels, num_relations)
+        self.bn1 = torch.nn.BatchNorm1d(hidden_channels)
         self.conv2 = RGCNConv(hidden_channels, hidden_channels, num_relations)
+        self.bn2 = torch.nn.BatchNorm1d(hidden_channels)
         self.conv3 = RGCNConv(hidden_channels, hidden_channels, num_relations)
+        self.bn3 = torch.nn.BatchNorm1d(hidden_channels)
         
-        # Edge Classifier (Relation Prediction)
+        # Classifiers with higher dropout
         self.edge_classifier = torch.nn.Sequential(
             torch.nn.Linear(2*hidden_channels, hidden_channels),
             torch.nn.ReLU(),
             torch.nn.Dropout(dropout),
-            torch.nn.Linear(hidden_channels, 3)  # 3 edge types
+            torch.nn.Linear(hidden_channels, 3)
         )
-        
-        # Node Classifier (Prem/Conc Prediction)
         self.node_classifier = torch.nn.Sequential(
             torch.nn.Linear(hidden_channels, hidden_channels//2),
             torch.nn.ReLU(),
             torch.nn.Dropout(dropout),
-            torch.nn.Linear(hidden_channels//2, 2)  # 2 node types
+            torch.nn.Linear(hidden_channels//2, 2)
         )
 
     def forward(self, x, edge_index, edge_type):
-        # Shared Encoding
-        x1 = F.relu(self.conv1(x, edge_index, edge_type))
-        x2 = F.relu(self.conv2(x1, edge_index, edge_type))
-        x3 = self.conv3(x2, edge_index, edge_type) + x1  # Skip connection
+        # Shared Encoding with BN
+        x1 = F.relu(self.bn1(self.conv1(x, edge_index, edge_type)))
+        x2 = F.relu(self.bn2(self.conv2(x1, edge_index, edge_type)))
+        x3 = self.bn3(self.conv3(x2, edge_index, edge_type)) + x1  # Skip connection
         
         # Edge Classification
         row, col = edge_index
@@ -245,6 +259,7 @@ class EnhancedLegalRGCN(torch.nn.Module):
         node_out = self.node_classifier(x3)
         
         return edge_out, node_out
+
 
 class MultiTaskLoss(torch.nn.Module):
     def __init__(self, edge_weights, node_weights, alpha=0.6):
@@ -268,6 +283,13 @@ def train_epoch(model, train_data, optimizer, criterion):
         if data.edge_index.size(1) == 0:
             continue
             
+        # Edge Dropout Regularization
+        if model.training and EDGE_DROPOUT_RATE > 0:
+            num_edges = data.edge_index.size(1)
+            mask = torch.rand(num_edges) > EDGE_DROPOUT_RATE
+            data.edge_index = data.edge_index[:, mask]
+            data.edge_type = data.edge_type[mask]
+            
         data = data.to(device)
         optimizer.zero_grad()
         
@@ -275,13 +297,14 @@ def train_epoch(model, train_data, optimizer, criterion):
         loss = criterion(edge_pred, data.edge_type, node_pred, data.y)
         
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)  # Tighter gradient clipping
         optimizer.step()
         
         total_loss += loss.item()
         valid_batches += 1
         
     return total_loss / max(1, valid_batches)
+
 
 
 def validate(model, val_data, criterion):
@@ -307,9 +330,12 @@ def validate(model, val_data, criterion):
             node_true.extend(data.y.cpu().numpy())
     
     avg_loss = total_loss / valid_batches if valid_batches > 0 else 0
-    return avg_loss, (edge_true, edge_preds), (node_true, node_preds)
+    
+    edge_f1 = f1_score(edge_true, edge_preds, average='macro')
+    node_f1 = f1_score(node_true, node_preds, average='macro')
+    combined_f1 = 0.7*edge_f1 + 0.3*node_f1  # Use same weighting as loss
 
-
+    return avg_loss, combined_f1, (edge_true, edge_preds), (node_true, node_preds)
 
 
 def run_cross_validation():
@@ -320,26 +346,29 @@ def run_cross_validation():
     kf = KFold(n_splits=NUM_FOLDS, shuffle=True, random_state=SEED)
     fold_metrics = []
 
-    for fold, (train_idx, test_idx) in enumerate(kf.split(all_data)):
+    for fold, (train_idx, val_idx) in enumerate(kf.split(all_data)):  # Direct train/val split
         print(f"\n=== Fold {fold+1}/{NUM_FOLDS} ===")
         fold_dir = Path(f"fold_{fold+1}")
         fold_dir.mkdir(exist_ok=True)
 
-        
-        # Split data
-        train_val = [all_data[i] for i in train_idx]
-        test_data = [all_data[i] for i in test_idx]
-        
-        # Create validation split
-        val_size = int(0.2 * len(train_val))
-        train_data, val_data = train_val[val_size:], train_val[:val_size]
+        # Split data - no separate test set
+        train_data = [all_data[i] for i in train_idx]
+        val_data = [all_data[i] for i in val_idx]  # Validation = test in this setup
 
         # Initialize model
         model = EnhancedLegalRGCN().to(device)
-        optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
+        optimizer = torch.optim.AdamW(
+            model.parameters(), 
+            lr=LEARNING_RATE, 
+            weight_decay=WEIGHT_DECAY
+        )
         scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5)
-        class_weights = calculate_balanced_weights(train_data)
-        criterion = FocalLoss(weight=class_weights.to(device), gamma=2.0)
+        edge_weights, node_weights = calculate_balanced_weights(train_data, device=device)
+        criterion = MultiTaskLoss(
+            edge_weights=edge_weights.to(device),
+            node_weights=node_weights.to(device),
+            alpha=0.6
+        )
 
         early_stopping = EarlyStopping(patience=EARLY_STOPPING_PATIENCE, min_delta=0.001)
         
@@ -348,19 +377,20 @@ def run_cross_validation():
         early_stop_epoch = None
         
         # Training loop
-        best_f1 = 0
+        best_f1 = -np.inf
         for epoch in range(1, EPOCHS+1):
             train_loss = train_epoch(model, train_data, optimizer, criterion)
-            val_loss, val_f1 = validate(model, val_data, criterion)
+            val_loss, val_f1, edge_data, node_data = validate(model, val_data, criterion)
             
             train_losses.append(train_loss)
             val_losses.append(val_loss)
 
             scheduler.step(val_f1)
 
-            if val_f1 > best_f1:
+            if val_f1 > best_f1 or epoch == 1:
                 best_f1 = val_f1
                 torch.save(model.state_dict(), f'fold_{fold+1}_best_model.pt')
+                print(f"Saved new best model with Val F1: {best_f1:.4f}")
 
             print(f'Epoch {epoch:02d} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Val F1: {val_f1:.4f}')
 
@@ -369,34 +399,27 @@ def run_cross_validation():
                 early_stop_epoch = epoch
                 break
 
-
         plot_learning_curves(train_losses, val_losses, fold_dir/"learning_curve.png", early_stop_epoch)
 
-        
-        # Test evaluation
-        all_true, all_preds = [], []
+        # Final validation evaluation with best model
         model.load_state_dict(torch.load(f'fold_{fold+1}_best_model.pt'))
-        for data in test_data:
-            data = data.to(device)
-            with torch.no_grad():
-                out = model(data.x, data.edge_index, data.edge_type)
-                preds = out.argmax(dim=1).cpu().numpy()
-                true = data.edge_type.cpu().numpy()
-                
-                all_preds.extend(preds)
-                all_true.extend(true)
+        _, final_f1, edge_data, node_data = validate(model, val_data, criterion)
+        fold_metrics.append(final_f1)
         
-        # Save reports
-        save_joint_results(all_true, all_preds, fold_dir)
+        # Save validation results
+        print(f"\n=== Fold {fold+1} Final Validation Metrics ===")
+        print(f"Edge F1: {f1_score(edge_data[0], edge_data[1], average='macro'):.4f}")
+        print(f"Node F1: {f1_score(node_data[0], node_data[1], average='macro'):.4f}")
+        save_joint_results(edge_data, node_data, fold_dir)
 
-    # Final report
+    # Final cross-validation report
     print("\n=== Cross-Validation Results ===")
-    print(f"Average F1 across folds: {np.mean(fold_metrics):.4f} ± {np.std(fold_metrics):.4f}")
+    print(f"Average Validation F1 across folds: {np.mean(fold_metrics):.4f} ± {np.std(fold_metrics):.4f}")
     plt.figure(figsize=(10,6))
     plt.plot(range(1, NUM_FOLDS+1), fold_metrics, marker='o')
     plt.title("Cross-Validation Performance per Fold")
     plt.xlabel("Fold Number")
-    plt.ylabel("F1 Score")
+    plt.ylabel("Validation F1 Score")
     plt.ylim(0, 1)
     plt.grid(True)
     plt.savefig('cross_val_results.png', dpi=300)
