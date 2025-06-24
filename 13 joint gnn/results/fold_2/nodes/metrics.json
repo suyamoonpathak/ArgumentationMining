@@ -1,0 +1,27 @@
+{
+  "Premise": {
+    "precision": 1.0,
+    "recall": 0.995575221238938,
+    "f1-score": 0.9977827050997783,
+    "support": 452.0
+  },
+  "Conclusion": {
+    "precision": 0.9375,
+    "recall": 1.0,
+    "f1-score": 0.967741935483871,
+    "support": 30.0
+  },
+  "accuracy": 0.995850622406639,
+  "macro avg": {
+    "precision": 0.96875,
+    "recall": 0.997787610619469,
+    "f1-score": 0.9827623202918246,
+    "support": 482.0
+  },
+  "weighted avg": {
+    "precision": 0.9961099585062241,
+    "recall": 0.995850622406639,
+    "f1-score": 0.9959129476548048,
+    "support": 482.0
+  }
+}
