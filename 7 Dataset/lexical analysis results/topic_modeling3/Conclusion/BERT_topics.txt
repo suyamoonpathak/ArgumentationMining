@@ -1,0 +1,4 @@
+BERT Topics for Conclusion :
+Topic 1: plea, plea must, rejected, must, first plea, therefore rejected, must therefore, therefore, limb, first
+Topic 2: appeal, must, part, ground appeal, ground, second, judgment, court, first, single ground
+Topic 3: appeal, ground, must, ground appeal, appeal must, rejected, must rejected, part, unfounded, first

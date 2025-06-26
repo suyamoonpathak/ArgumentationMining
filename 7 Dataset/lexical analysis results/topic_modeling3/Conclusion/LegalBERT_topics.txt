@@ -1,0 +1,5 @@
+LegalBERT Topics for Conclusion :
+Topic 1: appeal, ground, ground appeal, must, part, second, single ground, single, first, judgment
+Topic 2: appeal must, ground appeal, ground, appeal, must, rejected, first, must rejected, part, first ground
+Topic 3: follows, ground appeal, ground, rejected, must, appeal, appeal must, unfounded follows, therefore, must rejected
+Topic 4: foregoing, follows foregoing, light foregoing, appeal must, follows, must, appeal, light, rejected follows, must rejected

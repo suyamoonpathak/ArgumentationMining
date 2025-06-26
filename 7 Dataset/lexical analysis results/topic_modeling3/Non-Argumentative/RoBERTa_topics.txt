@@ -1,0 +1,4 @@
+RoBERTa Topics for Non-Argumentative :
+Topic 1: court, commission, appeal, judgment, general, article, decision, general court, aid, first
+Topic 2: judgment, ecli, ecli eu, eu, judgment ecli, judgment 16, eu 2012, 2012, 16, signatures
+Topic 3: represented, established, european, sa, acting, de, court, chamber, judgment, spv

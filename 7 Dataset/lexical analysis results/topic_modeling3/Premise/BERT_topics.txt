@@ -1,0 +1,3 @@
+BERT Topics for Premise :
+Topic 1: court, commission, general, paragraph, judgment, aid, case, appeal, general court, law
+Topic 2: ecli eu, ecli, judgment, eu, judgment ecli, judgment 16, judgment 29, eu 2012, 11 judgment, 793

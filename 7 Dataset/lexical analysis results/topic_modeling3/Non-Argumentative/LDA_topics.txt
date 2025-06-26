@@ -1,0 +1,5 @@
+LDA Topics for Non-Argumentative (4 topics):
+Topic 1: appeal, court, commission, general, general court, judgment, decision, ground, first, ground appeal
+Topic 2: aid, commission, decision, state, article, state aid, contested, measures, market, tax
+Topic 3: court, judgment, commission, first, case, instance, first instance, general, appeal, general court
+Topic 4: tax, article, commission, law, measure, procedure, scheme, system, issue, companies

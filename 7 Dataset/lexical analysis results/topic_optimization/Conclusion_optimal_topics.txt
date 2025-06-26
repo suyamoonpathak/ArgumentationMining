@@ -1,0 +1,7 @@
+Optimal Number of Topics for Conclusion: 2
+Best Coherence Score: 0.5172
+Corresponding Perplexity: -4.0880
+
+Topics:
+Topic 1: 0.048*"single" + 0.044*"light" + 0.034*"appeal" + 0.034*"objective" + 0.031*"general" + 0.029*"court" + 0.029*"wdfg" + 0.028*"issue" + 0.028*"ground" + 0.027*"arguments"
+Topic 2: 0.111*"appeal" + 0.088*"ground" + 0.076*"rejected" + 0.060*"part" + 0.058*"first" + 0.043*"second" + 0.040*"unfounded" + 0.031*"consequently" + 0.026*"third" + 0.024*"follows"

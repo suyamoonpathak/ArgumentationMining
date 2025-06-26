@@ -1,0 +1,5 @@
+RoBERTa Topics for Conclusion :
+Topic 1: light foregoing, light, foregoing, appeal, appeal must, unfounded light, ground appeal, ground, rejected light, must
+Topic 2: appeal, must, ground, ground appeal, part, second, first, judgment, court, third
+Topic 3: must, appeal must, rejected, appeal, must rejected, ground, ground appeal, follows, unfounded, rejected unfounded
+Topic 4: part, ground appeal, ground, appeal, first, rejected, must, single ground, appeal must, single

@@ -1,0 +1,4 @@
+LegalBERT Topics for Non-Argumentative :
+Topic 1: commission, court, appeal, decision, article, general, aid, judgment, first, general court
+Topic 2: judgment, ecli, ecli eu, eu, judgment ecli, 2012, judgment 16, eu 2012, 16, chamber
+Topic 3: language case, signatures, language, signatures language, english, case english, case, case spanish, italian, spanish

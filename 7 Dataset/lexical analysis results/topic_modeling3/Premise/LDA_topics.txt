@@ -1,0 +1,4 @@
+LDA Topics for Premise (3 topics):
+Topic 1: court, first, appeal, article, commission, decision, general, law, aid, general court
+Topic 2: commission, paragraph, eu, case, law, case law, judgment, see, cited, state
+Topic 3: general, court, general court, judgment, tax, aid, commission, issue, judgment appeal, measure

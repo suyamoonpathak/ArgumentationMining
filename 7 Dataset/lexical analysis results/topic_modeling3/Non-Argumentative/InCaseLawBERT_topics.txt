@@ -1,0 +1,4 @@
+InCaseLawBERT Topics for Non-Argumentative :
+Topic 1: commission, court, appeal, judgment, article, general, decision, aid, first, case
+Topic 2: decision, contested decision, contested, decision contested, decision issue, decision decision, issue, issue decision, ris, tv2 decision
+Topic 3: language case, signatures, language, signatures language, english, case english, case, case spanish, italian, spanish

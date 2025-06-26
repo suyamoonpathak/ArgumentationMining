@@ -1,0 +1,8 @@
+Optimal Number of Topics for Premise: 3
+Best Coherence Score: 0.5421
+Corresponding Perplexity: -6.7518
+
+Topics:
+Topic 1: 0.059*"court" + 0.035*"appeal" + 0.034*"judgment" + 0.034*"general" + 0.027*"commission" + 0.021*"first" + 0.019*"paragraph" + 0.017*"decision" + 0.015*"case" + 0.012*"part"
+Topic 2: 0.036*"measure" + 0.025*"issue" + 0.023*"system" + 0.019*"reference" + 0.018*"general" + 0.013*"objective" + 0.013*"goodwill" + 0.011*"undertakings" + 0.011*"selectivity" + 0.010*"scheme"
+Topic 3: 0.039*"commission" + 0.033*"state" + 0.027*"paragraph" + 0.027*"case" + 0.015*"article" + 0.014*"member" + 0.012*"effect" + 0.011*"concerned" + 0.011*"treaty" + 0.010*"measures"

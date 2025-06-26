@@ -1,0 +1,7 @@
+Optimal Number of Topics for Non-Argumentative: 2
+Best Coherence Score: 0.5776
+Corresponding Perplexity: -7.0188
+
+Topics:
+Topic 1: 0.020*"commission" + 0.015*"article" + 0.014*"measure" + 0.013*"state" + 0.013*"decision" + 0.008*"issue" + 0.006*"system" + 0.006*"contested" + 0.006*"general" + 0.006*"undertakings"
+Topic 2: 0.055*"court" + 0.040*"appeal" + 0.037*"judgment" + 0.030*"commission" + 0.028*"first" + 0.026*"general" + 0.015*"instance" + 0.013*"decision" + 0.012*"case" + 0.011*"costs"

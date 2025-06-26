@@ -1,0 +1,4 @@
+BERT Topics for Non-Argumentative :
+Topic 1: commission, court, appeal, judgment, general, article, aid, first, case, decision
+Topic 2: decision, contested decision, contested, decision contested, decision issue, issue, decision decision, ris, tv2 decision, 72
+Topic 3: signatures, signatures language, language case, language, english, case, case english, case spanish, italian, spanish
