@@ -3,7 +3,7 @@ import os, ast, xml.etree.ElementTree as ET
 from pathlib import Path
 
 # ----------  configurable paths  ----------
-XML_DIR   = Path("../3 GNN/xml_files")
+XML_DIR   = Path("../7 Dataset/xml_files/all_xml")
 CSV_DIR   = Path("prem_vs_conc_with_events_updated")
 MODEL_DIR = Path("../3 GNN/RoBERTa_prem_conc_finetuned")
 OUTPUT_DIR = Path("graph_data_event_only")
