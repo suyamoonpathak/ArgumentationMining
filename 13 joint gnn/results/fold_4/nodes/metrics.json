@@ -3,6 +3,7 @@
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
+<<<<<<< HEAD:13 joint gnn/results/fold_4/nodes/metrics.json
     "support": 120.0
   },
   "Conclusion": {
@@ -17,11 +18,37 @@
     "recall": 1.0,
     "f1-score": 1.0,
     "support": 131.0
+=======
+    "support": 3.0
+  },
+  "Attack": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "No Relation": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 1.0
+  },
+  "accuracy": 1.0,
+  "macro avg": {
+    "precision": 0.6666666666666666,
+    "recall": 0.6666666666666666,
+    "f1-score": 0.6666666666666666,
+    "support": 4.0
+>>>>>>> 1408900 (push):13 joint gnn/fold_2/edges/metrics.json
   },
   "weighted avg": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
+<<<<<<< HEAD:13 joint gnn/results/fold_4/nodes/metrics.json
     "support": 131.0
+=======
+    "support": 4.0
+>>>>>>> 1408900 (push):13 joint gnn/fold_2/edges/metrics.json
   }
 }

@@ -1,18 +1,30 @@
 {
   "Premise": {
     "precision": 1.0,
+<<<<<<< HEAD:13 joint gnn/results/fold_3/nodes/metrics.json
     "recall": 1.0,
     "f1-score": 1.0,
     "support": 172.0
+=======
+    "recall": 0.9915966386554622,
+    "f1-score": 0.9957805907172996,
+    "support": 238.0
+>>>>>>> 1408900 (push):13 joint gnn/fold_9/nodes/metrics.json
   },
   "Conclusion": {
-    "precision": 1.0,
+    "precision": 0.9166666666666666,
     "recall": 1.0,
+<<<<<<< HEAD:13 joint gnn/results/fold_3/nodes/metrics.json
     "f1-score": 1.0,
     "support": 12.0
+=======
+    "f1-score": 0.9565217391304348,
+    "support": 22.0
+>>>>>>> 1408900 (push):13 joint gnn/fold_9/nodes/metrics.json
   },
-  "accuracy": 1.0,
+  "accuracy": 0.9923076923076923,
   "macro avg": {
+<<<<<<< HEAD:13 joint gnn/results/fold_3/nodes/metrics.json
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
@@ -23,5 +35,17 @@
     "recall": 1.0,
     "f1-score": 1.0,
     "support": 184.0
+=======
+    "precision": 0.9583333333333333,
+    "recall": 0.9957983193277311,
+    "f1-score": 0.9761511649238672,
+    "support": 260.0
+  },
+  "weighted avg": {
+    "precision": 0.992948717948718,
+    "recall": 0.9923076923076923,
+    "f1-score": 0.9924586878907189,
+    "support": 260.0
+>>>>>>> 1408900 (push):13 joint gnn/fold_9/nodes/metrics.json
   }
 }
