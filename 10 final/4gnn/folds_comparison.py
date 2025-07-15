@@ -64,7 +64,7 @@ def generate_comparison_report(results):
 
 def main():
     # Configuration
-    BASE_PATH = "./EARLY STOPPED MLP 2/folds data"  # Current directory, change if needed
+    BASE_PATH = "EARLY STOPPED GNN FROM PROCESSED EMBEDDINGS/folds data"  # Current directory, change if needed
     MODEL_NAME = "GNN_raw_embeddings"  # Change to your actual model name
     
     print("Starting fold comparison analysis...")

@@ -1,0 +1,11 @@
+model_name,fold_number,accuracy,f1_score_macro_avg
+GNN_events_only_processed_embeddings,1,0.9641,0.9337
+GNN_events_only_processed_embeddings,2,0.9793,0.9351
+GNN_events_only_processed_embeddings,3,0.9828,0.9138
+GNN_events_only_processed_embeddings,4,0.9795,0.8960
+GNN_events_only_processed_embeddings,5,0.9702,0.9132
+GNN_events_only_processed_embeddings,6,0.9765,0.8640
+GNN_events_only_processed_embeddings,7,0.9979,0.9833
+GNN_events_only_processed_embeddings,8,1.0000,1.0000
+GNN_events_only_processed_embeddings,9,0.9979,0.9517
+GNN_events_only_processed_embeddings,10,0.9757,0.9064
