@@ -1,3 +1,5 @@
+# first activate the events conda environment
+
 import pandas as pd
 import os
 import spacy
@@ -205,7 +207,7 @@ def process_all_csvs_in_folder(input_folder, output_folder):
             process_csv_with_events(input_csv_path, output_folder)
 
 # Example Usage
-input_folder = '../7 Dataset/prem_vs_conc_csv_files/all'  # Set the folder path with the CSVs
-output_folder = 'prem_vs_conc_with_events_updated'  # Set the folder path where to save updated files
+input_folder = '../7 Dataset/argumentative_nonargumentative_FinalCSVs/all_arg_vs_nonarg'  # Set the folder path with the CSVs
+output_folder = 'arg_vs_non-arg_with_events_updated'  # Set the folder path where to save updated files
 
 process_all_csvs_in_folder(input_folder, output_folder)
