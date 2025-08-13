@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 import pandas as pd
 
 # Configure API keys
-api_keys = ['AIzaSyD4islRmk3UUTdAN5q9XI5mITr6H75b1gM', 'AIzaSyBa5ABeuSi_Zc8RjZ4UEryl9r8B38_MwPU','AIzaSyAhna31nA7OwXC7H3UBBbmrw3HqtLGS3ok']
+api_keys = ['AIzaSyAhna31nA7OwXC7H3UBBbmrw3HqtLGS3ok','AIzaSyAlepfveNi6PV1PMuxPJ_4M-qmowFP18SU', 'AIzaSyCTvL8JQDbFxqhmptoBf22sy4VsL7qK8hc','AIzaSyC8J9JSMCoCpGUnQYYBAhep3aS90d_NbVw', 'AIzaSyC1HXjY8xv-YnKrnZBDk4775NbbRLYepPA', 'AIzaSyBhsULUFDO2MQFV4xw1jQvWaIoKBvDf6vo']
 
 key_usage = {key: {'count': 0, 'last_used': None, 'request_times': []} for key in api_keys}
 current_key_index = 0
@@ -86,51 +86,45 @@ def get_relation_prediction(source_text, target_text):
     global current_key_index
     select_next_available_key()
     
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
     current_key = api_keys[current_key_index]
     
     try:
-        prompt = f"""You are a Harvard-trained legal scholar with expertise in legal argumentation analysis. Your task is to analyze the relationship between two legal arguments with the precision and analytical rigor expected in top-tier legal academia.
+        prompt = f""" You are a Harvard-trained legal expert specialized in legal argument analysis. Your job is to decide the relationship between two legal arguments: the SOURCE and the TARGET.
 
-CLASSIFICATION TASK:
-Determine the relationship between the source argument and target argument. The relationship can be "support", "attack", or "no-relation".
+## TASK: Read the SOURCE and TARGET arguments below and decide if the SOURCE supports the TARGET, attacks the TARGET, or has no relation to it. This is important. Your answer will help judges in serious cases. A wrong answer could cause mistakes in how arguments are understood.
 
-DEFINITIONS:
-• SUPPORT: The source argument provides evidence, reasoning, or justification that strengthens, reinforces, or validates the target argument. The source helps establish the credibility or validity of the target.
-• ATTACK: The source argument contradicts, undermines, refutes, or weakens the target argument. The source challenges the validity or credibility of the target.
-• NO-RELATION: The source and target arguments are independent, unrelated, or address different issues without any logical connection that would constitute support or attack.
+## DEFINITIONS:
+- SUPPORT: SOURCE gives reasons, evidence, or legal rules that make TARGET stronger or more believable.
+- ATTACK: SOURCE gives reasons, evidence, or rules that make TARGET weaker or less believable.
+- NO-RELATION: SOURCE and TARGET are about different issues or facts, and the SOURCE does not affect TARGET at all.
 
-ANALYTICAL FRAMEWORK:
-Look for SUPPORT indicators:
-- Source provides evidence for target's claims
-- Source establishes legal precedent that validates target
-- Source offers reasoning that strengthens target's position
-- Logical flow where source builds toward target's conclusion
+## SIGNS OF SUPPORT (examples only):
+- SOURCE agrees with TARGET’s point.
+- SOURCE uses reasoning or facts that help TARGET.
+- SOURCE cites law or precedent that matches TARGET’s position.
 
-Look for ATTACK indicators:
-- Source contradicts target's claims or reasoning
-- Source provides counter-evidence to target
-- Source establishes precedent that undermines target
-- Logical inconsistency between source and target positions
+## SIGNS OF ATTACK (examples only):
+- SOURCE disagrees with TARGET.
+- SOURCE gives facts or law that go against TARGET.
+- SOURCE shows why TARGET is wrong.
 
-Look for NO-RELATION indicators:
-- Arguments address completely different legal issues
-- No logical connection between the reasoning chains
-- Independent factual statements without argumentative relationship
+## SIGNS OF NO-RELATION:
+- SOURCE talks about something totally different.
+- SOURCE would not change TARGET’s strength if removed.
+- No clear link between the two.
 
-SOURCE ARGUMENT:
-"{source_text}"
+### LIMITATION:
+- Do NOT just look for the sample words. Think about the meaning and the relationship.
+- Only respond with one lowercase word: "support", "attack", "no-relation"
 
-TARGET ARGUMENT:
-"{target_text}"
+## SOURCE ARGUMENT: "{source_text}"
 
-INSTRUCTIONS:
-Apply your legal training to analyze how the source argument relates to the target argument. Consider whether the source strengthens, weakens, or has no bearing on the target's position.
+## TARGET ARGUMENT: "{target_text}"
 
-OUTPUT FORMAT:
-Respond with exactly one word: "support" or "attack" or "no-relation"
+Your Response:
+"""
 
-Your classification:"""
 
         # Update key usage
         now = datetime.now()
