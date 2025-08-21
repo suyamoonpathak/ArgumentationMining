@@ -44,7 +44,7 @@ torch.cuda.manual_seed_all(SEED)
 
 # Configuration
 MODELS = {
-    "BERT": "bert-base-uncased",
+    # "BERT": "bert-base-uncased",
     "LegalBERT": "nlpaueb/legal-bert-base-uncased",
     "InCaseLawBERT": "law-ai/InCaseLawBERT",
     "RoBERTa": "roberta-base"
