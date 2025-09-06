@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import json
 
 # Configuration
-GRAPH_DATA_DIR = Path("graph_data_processed_embeddings")
+GRAPH_DATA_DIR = Path("legalBERT_raw_graph_data_for_joint_prediction")
 NUM_FOLDS = 10
 SEED = 42
 EPOCHS = 10
