@@ -3,10 +3,10 @@ import os, ast, xml.etree.ElementTree as ET
 from pathlib import Path
 
 # ----------  configurable paths  ----------
-XML_DIR   = Path("../7 Dataset/xml_files/all_xml")
-CSV_DIR   = Path("prem_vs_conc_with_events_updated")
+XML_DIR   = Path("../3 GNN/xml_files")
+CSV_DIR   = Path("updated_events/prem_vs_conc_with_events_updated")
 MODEL_DIR = Path("../3 GNN/RoBERTa_prem_conc_finetuned")
-OUTPUT_DIR = Path("graph_data_event_only")
+OUTPUT_DIR = Path("RoBERTa_raw_graph_data_updated_event_only")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ----------  loader for the fine-tuned model  ----------
@@ -67,6 +67,20 @@ def join_events(ev_list):
     """turn ['a b', 'c d'] -> 'a b ; c d'"""
     return " ; ".join(e.strip() for e in ev_list if e.strip())
 
+#processed embeddings
+# def embed_texts(texts, batch=4):
+#     embs = []
+#     for i in tqdm.tqdm(range(0, len(texts), batch),
+#                        desc="embedding", leave=False):
+#         tok = tokenizer(texts[i:i+batch],
+#                         padding=True, truncation=True,
+#                         max_length=512, return_tensors="pt").to(device)
+#         with torch.no_grad():
+#             out = model(**tok).last_hidden_state[:,0,:].cpu()
+#         embs.append(out)
+#     return torch.cat(embs, 0)
+
+#raw
 def embed_texts(texts, batch=4):
     embs = []
     for i in tqdm.tqdm(range(0, len(texts), batch),
@@ -75,8 +89,9 @@ def embed_texts(texts, batch=4):
                         padding=True, truncation=True,
                         max_length=512, return_tensors="pt").to(device)
         with torch.no_grad():
-            out = model(**tok).last_hidden_state[:,0,:].cpu()
-        embs.append(out)
+            token_embeddings = model.embeddings.word_embeddings(tok['input_ids'])
+            cls_embeddings = token_embeddings[:,0,:]
+        embs.append(cls_embeddings)
     return torch.cat(embs, 0)
 
 def strategic_negatives(nodes, edges, id2idx,

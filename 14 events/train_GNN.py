@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ import torch.nn.functional as F
 import json
 
 # Configuration
-GRAPH_DATA_DIR = Path("graph_data_event_only")
+GRAPH_DATA_DIR = Path("RoBERTa_raw_graph_data_updated_event_only")
 NUM_FOLDS = 10
 SEED = 42
 EPOCHS = 10
