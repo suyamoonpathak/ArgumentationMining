@@ -1,7 +1,8 @@
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
-from transformers import RobertaTokenizer, RobertaForSequenceClassification, AdamW
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from torch.optim import AdamW
 from sklearn.model_selection import KFold
 from sklearn.metrics import f1_score, accuracy_score, classification_report, confusion_matrix
 import numpy as np
@@ -11,21 +12,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 from datetime import datetime
-import pandas as pd
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import os
-import time
-from datetime import datetime
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import KFold
-from torch.utils.data import Dataset, DataLoader
-from transformers import RobertaTokenizer, RobertaForSequenceClassification, AdamW
-from tqdm import tqdm
-from transformers import AutoModelForSequenceClassification
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  
 
 # Configuration
 MAX_LEN = 256
@@ -85,9 +73,16 @@ class MultiTaskLegalBERT(torch.nn.Module):
         self.target_classifier = torch.nn.Linear(768, 3)
 
     def forward(self, input_ids, attention_mask):
-        # Get the model's output (the last hidden state and the pooler output)
-        outputs = self.legalbert(input_ids=input_ids, attention_mask=attention_mask)
-        pooled_output = outputs.pooler_output  # This is the pooled output for classification tasks
+        # Get the model's output (this will have 'logits' and 'hidden_states')
+        outputs = self.legalbert(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
+        
+        # Extract the hidden states (last layer hidden states)
+        hidden_states = outputs.hidden_states[-1]  # (batch_size, sequence_length, hidden_size)
+        
+        # We use the first token's hidden state (CLS token)
+        pooled_output = hidden_states[:, 0, :]  # Shape: (batch_size, hidden_size)
+        
+        # Apply dropout for regularization
         pooled_output = self.dropout(pooled_output)
         
         # Return predictions for each task
@@ -140,9 +135,8 @@ kf = KFold(n_splits=10, shuffle=False)
 
 results_dir = f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 os.makedirs(results_dir, exist_ok=True)
-tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+tokenizer = AutoTokenizer.from_pretrained("nlpaueb/legal-bert-base-uncased")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 # Cross-validation loop
 for fold_idx, (train_file_idx, test_file_idx) in enumerate(kf.split(unique_files)):
@@ -158,7 +152,7 @@ for fold_idx, (train_file_idx, test_file_idx) in enumerate(kf.split(unique_files
     # Model initialization
     model = MultiTaskLegalBERT().to(device)
     optimizer = AdamW([
-        {'params': model.roberta.parameters(), 'lr': 1e-5},
+        {'params': model.legalbert.parameters(), 'lr': 1e-5},
         {'params': model.relation_classifier.parameters(), 'lr': 2e-4},
         {'params': model.source_classifier.parameters(), 'lr': 2e-4},
         {'params': model.target_classifier.parameters(), 'lr': 2e-4}
@@ -168,7 +162,6 @@ for fold_idx, (train_file_idx, test_file_idx) in enumerate(kf.split(unique_files
     source_criterion = torch.nn.CrossEntropyLoss(weight=CLASS_WEIGHTS['source'].to(device))
     target_criterion = torch.nn.CrossEntropyLoss(weight=CLASS_WEIGHTS['target'].to(device))
 
-    
     # Data loaders
     train_loader = DataLoader(ArgumentDataset(train_df, tokenizer, MAX_LEN), 
                              batch_size=BATCH_SIZE, shuffle=True)
