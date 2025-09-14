@@ -1,0 +1,4 @@
+InCaseLawBERT Topics for Non-Argumentative (4 topics):
+Topic 1: general, decision, first, aid, costs, tax, state, law, procedure, eu
+Topic 2: decision, contested decision, contested, decision contested, decision issue, issue, decision decision, issue decision, 51, ris
+Topic 3: signatures, language, signatures language, english, language english, english signatures, language spanish, italian, spanish, bonichot

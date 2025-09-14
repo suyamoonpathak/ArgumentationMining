@@ -1,0 +1,4 @@
+BERT Topics for Conclusion (5 topics):
+Topic 1: must, part, ground, second, single ground, single, first, light, third, set
+Topic 2: plea, plea must, rejected, therefore rejected, must, must therefore, first plea, therefore, second plea, second
+Topic 3: ground, must, ground must, rejected, must rejected, part, unfounded, first, first ground, second

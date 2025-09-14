@@ -1,0 +1,4 @@
+InCaseLawBERT Topics for Premise (3 topics):
+Topic 1: must confer, third must, advantage recipient, confer, 29, confer selective, recipient, 16, third, selective advantage
+Topic 2: ecli eu, ecli, eu, eu 2012, 2021 793, 793, 21 ecli, 2016 145, 2012, 2012 366
+Topic 3: general, paragraph, aid, law, decision, state, first, tax, measure, issue

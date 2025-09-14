@@ -1,0 +1,5 @@
+LDA Topics for Non-Argumentative (4 topics):
+Topic 1: aid, general, tax, state, decision, law, issue, measure, scheme, state aid
+Topic 2: tax, state, law, amount, gibraltar, private, would, rate, company, decision
+Topic 3: first, general, decision, instance, costs, first instance, plea, second, order, contested
+Topic 4: eu, european, general, decision, ec, procedure, republic, 16, union, de

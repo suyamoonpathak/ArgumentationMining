@@ -1,0 +1,4 @@
+LSA Topics for Premise (3 topics):
+Topic 1: aid, general, paragraph, law, first, decision, state, tax, measure, issue
+Topic 2: first, ground, part, instance, first instance, rejected, second, first part, first ground, plea
+Topic 3: tax, system, issue, measure, measure issue, reference, goodwill, general, reference system, treatment

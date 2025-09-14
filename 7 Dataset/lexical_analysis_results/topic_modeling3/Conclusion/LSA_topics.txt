@@ -1,0 +1,6 @@
+LSA Topics for Conclusion (5 topics):
+Topic 1: ground, ground must, rejected, first, must, must rejected, part, first ground, second, unfounded
+Topic 2: therefore rejected, must therefore, therefore, plea must, plea, second plea, second, first plea, dismissed, must
+Topic 3: single ground, single, part single, part, first part, must therefore, therefore rejected, rejected ineffective, ineffective, therefore
+Topic 4: first, first ground, part first, plea must, plea, therefore, must therefore, first part, therefore rejected, first plea
+Topic 5: dismissed, must dismissed, foregoing, follows foregoing, plea, light, follows, light foregoing, first, plea must

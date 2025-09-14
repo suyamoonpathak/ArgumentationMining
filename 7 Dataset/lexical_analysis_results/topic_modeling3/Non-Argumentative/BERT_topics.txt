@@ -1,0 +1,4 @@
+BERT Topics for Non-Argumentative (4 topics):
+Topic 1: general, decision, first, aid, tax, law, state, costs, procedure, instance
+Topic 2: decision, contested decision, contested, decision contested, decision issue, issue, decision decision, issue decision, ris, tv2 decision
+Topic 3: signatures, signatures language, language, english, language english, language spanish, italian, spanish, german, french

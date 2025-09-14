@@ -1,0 +1,4 @@
+RoBERTa Topics for Non-Argumentative (4 topics):
+Topic 1: general, decision, aid, tax, first, law, state, costs, contested, issue
+Topic 2: established, represented, sa, european, acting, de, chamber, spv, hearing, advocate
+Topic 3: ecli eu, ecli, eu, 2016 145, 2018 505, 145, 505, eu 2018, eu 2016, 2018

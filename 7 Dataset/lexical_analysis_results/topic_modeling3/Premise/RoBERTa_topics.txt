@@ -1,0 +1,3 @@
+RoBERTa Topics for Premise (3 topics):
+Topic 1: general, paragraph, aid, law, decision, state, first, tax, measure, issue
+Topic 2: ecli eu, ecli, eu, eu 2012, 793, 2021 793, 2012, 2012 366, 29, 366

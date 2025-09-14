@@ -1,0 +1,4 @@
+LegalBERT Topics for Conclusion (5 topics):
+Topic 1: follows, must, rejected, ground, ground must, unfounded follows, therefore, unfounded, must rejected, must therefore
+Topic 2: ground must, must, ground, rejected, must rejected, part, first, unfounded, consequently, first ground
+Topic 3: must, ground, part, second, first, rejected, single, single ground, must rejected, light

@@ -1,0 +1,6 @@
+LDA Topics for Conclusion (5 topics):
+Topic 1: follows, plea, telefónica, must, dismissed, upon telefónica, upon, telefónica support, relied upon, plea relied
+Topic 2: first, 4153 29, 29, 4153, first instance, instance, code, must, consequently, address
+Topic 3: must, issue, decision, arguments, qualifying, admissible, set aside, aside, set, must set
+Topic 4: ground, first, must, therefore, unfounded, first part, therefore unfounded, rejected, sixth, ground must
+Topic 5: must, ground, rejected, part, must rejected, ground must, first, second, unfounded, single

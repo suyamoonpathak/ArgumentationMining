@@ -1,0 +1,3 @@
+InCaseLawBERT Topics for Conclusion (5 topics):
+Topic 1: foregoing, light foregoing, light, must, ground, follows foregoing, follows, ground must, rejected, must rejected
+Topic 2: must, ground, rejected, part, must rejected, first, ground must, second, unfounded, single

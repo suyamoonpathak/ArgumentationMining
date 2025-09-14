@@ -1,0 +1,4 @@
+LegalBERT Topics for Non-Argumentative (4 topics):
+Topic 1: decision, general, aid, first, tax, costs, law, state, procedure, instance
+Topic 2: ecli, ecli eu, eu, eu 2012, 16, 2012, president, chamber, eu 2018, 2018
+Topic 3: signatures, language, signatures language, english, language english, language spanish, italian, spanish, bonichot, first chamber

@@ -1,0 +1,4 @@
+LDA Topics for Premise (3 topics):
+Topic 1: paragraph, eu, law, see, measure, cited, state, ecr, law cited, others
+Topic 2: aid, decision, first, general, paragraph, law, state, instance, scheme, first instance
+Topic 3: general, issue, tax, first, law, paragraph, decision, paragraphs, measure, part

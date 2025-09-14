@@ -1,0 +1,23 @@
+text,label,events
+"The Commission, taking into account the applicant's position in these proceedings and the impact of their outcome on her own financial situation,",premise,[]
+finds that the applicant is entitled to complain about the length of the proceedings.,conclusion,['applicant entitle length']
+"They submit that the applicant failed to complain about the length in the course of the domestic court proceedings and did not lodge a request under S. 91 of the Court Organisation Act 1990 (Gerichtsverfassungsgesetz) that, in view of the alleged delay, the superior court should fix an appropriate time-limit for the conduct of the court proceedings.",premise,"['applicant fail length', 'company rt fix time limit']"
+"According to Article 26 (Art. 26), the ""Commission may only deal with the matter after all domestic remedies have been exhausted, according to the generally recognised rules of international law"".",premise,['<ORG> deal matter']
+"The Government maintain that the applicant failed to exhaust, as required by Article 26 (Art. 26) of the Convention, the remedies available to her under Austrian law.",conclusion,[]
+"The Commission notes that S. 91 of the Austrian Court Organisation Act, which entitles the parties to court proceedings to lodge a request with the superior court to fix a time limit in respect of a delayed procedural step, entered into force on 1 January 1990 when the proceedings in question were already pending for one year.",premise,"['<ORG> e that', 'which entitle party', 'which entitle request', 'which entitle company rt', 'request fix time limit', 'step enter force', 'proceeding pende year']"
+"At that stage, the District Court had already been dealing with the applicant's request of December 1988 and, in its decision of 10 August 1989, postponed the examination thereof, and the Regional Court had decided on the applicant's appeal on 29 November 1989.",premise,"['<ORG> deal applicants request', '<ORG> decide applicants appeal']"
+"The Commission finds that it is thus not faced with the issue of an alleged absence of any reaction of the competent court to a procedural request (cf. No. 19369/92, Dec. 8.1.93, not published).",conclusion,['number face issue']
+"The Commission finds that it is thus not faced with the issue of an alleged absence of any reaction of the competent court to a procedural request (cf. No. 19369/92, Dec. 8.1.93, not published).",premise,['number face issue']
+"In the circumstances of the present case, a request under S. 91 of the Court Organisation Act cannot be considered as an effective remedy to ensure, regarding the proceedings as a whole, a determination of the applicant's civil rights and obligations within a ""reasonable time"" within the meaning of Article 6 para. 1 (Art. 6-1) of the Convention.",premise,"['request not sidere remedy', 'remedy ensure determination', 'determination regard proceeding']"
+"The application cannot, therefore, be rejected for non-compliance with the condition as to the exhaustion of domestic remedies under Article 26 (Art. 26) of the Convention.",conclusion,['application not reject number compliance']
+"As regards the merits of the complaint, the Government, referring to the case-law of the Convention organs, argue that the length of the proceedings was mainly due to the complexity of the case.",premise,['government refer case law']
+"In this respect, they refer to the numerous other matters related to the proceedings at issue, and the proceedings before the Vienna Juvenile Court.",premise,"['they refer matter', 'matter relate proceeding', 'matter relate proceeding']"
+They consider that no substantial delays were imputable to the Austrian authorities.,conclusion,[]
+that she filed numerous submissions,premise,['she file submission']
+thereby caused difficulties to survey the file and to decide upon all of her requests in due time.,premise,[]
+"According to the Government, the applicant herself was responsible for the delays in",conclusion,[]
+"The Commission considers, in the light of the criteria established by the case-law of the Convention institutions on the question of ""reasonable time""",premise,"['<ORG> sider light', 'criterion establish case law']"
+"the complexity of the case,",premise,[]
+"the applicant's conduct and that of the competent authorities), and having regard to all the information in its possession",premise,[]
+"that a thorough examination of this complaint is required, both as to the law and as to the facts.",premise,['examination require fact']
+"For these reasons, the Commission unanimously DECLARES THE APPLICATION ADMISSIBLE, without prejudging the merits of the case.",conclusion,"['<ORG> declare application', '<ORG> declare merit']"

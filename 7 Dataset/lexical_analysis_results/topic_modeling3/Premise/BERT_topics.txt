@@ -1,0 +1,4 @@
+BERT Topics for Premise (3 topics):
+Topic 1: general, paragraph, aid, law, decision, state, first, tax, measure, issue
+Topic 2: 29, 16, 15, 18, 17, , , , , 
+Topic 3: ecli eu, ecli, eu, eu 2012, 2021 793, 21 ecli, 2016 145, 2012, 2012 366, 366
