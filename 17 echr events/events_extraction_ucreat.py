@@ -382,7 +382,7 @@ def process_all_csvs_in_folder(input_folder, output_folder):
 # Main execution
 if __name__ == "__main__":
     # Set your input and output folders here
-    input_folder = '../11 echr/prem_vs_conc_vs_NA_finetuning_on_echr/data/all'  # Folder containing CSV files to process
+    input_folder = '../11 echr/prem_vs_conc_vs_NA_testing_on_echr/data'  # Folder containing CSV files to process
     output_folder = 'p_c_na_ucreat_events_echr'  # Folder to save processed CSV files
     
     # Process all CSV files
