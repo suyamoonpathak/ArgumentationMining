@@ -1,0 +1,10 @@
+=== NODE CLASSIFICATION REPORT ===
+                   precision    recall  f1-score   support
+
+          Premise     1.0000    0.7333    0.8462       180
+       Conclusion     0.0000    0.0000    0.0000        11
+Non-Argumentative     0.7944    1.0000    0.8854       228
+
+         accuracy                         0.8592       419
+        macro avg     0.5981    0.5778    0.5772       419
+     weighted avg     0.8619    0.8592    0.8453       419

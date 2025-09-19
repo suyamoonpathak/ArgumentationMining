@@ -1,0 +1,10 @@
+=== EDGE CLASSIFICATION REPORT ===
+              precision    recall  f1-score   support
+
+     Support     0.6743    0.9866    0.8011       149
+      Attack     0.5333    1.0000    0.6957         8
+ No Relation     1.0000    0.7467    0.8550       300
+
+    accuracy                         0.8293       457
+   macro avg     0.7359    0.9111    0.7839       457
+weighted avg     0.8856    0.8293    0.8346       457
