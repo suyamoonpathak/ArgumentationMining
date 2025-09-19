@@ -128,7 +128,7 @@ def save_classification_report(y_true_dict, preds_dict, fold_dir):
             f.write(report)
             f.write("\n\n")
             
-df = pd.read_csv('filtered_relations_dataset_removed_conclusion_source.csv')
+df = pd.read_csv('filtered_all_removed_conclusion_source.csv')
 sorted_df = df.sort_values('file_name').reset_index(drop=True)
 unique_files = sorted_df['file_name'].unique()
 kf = KFold(n_splits=10, shuffle=False)
