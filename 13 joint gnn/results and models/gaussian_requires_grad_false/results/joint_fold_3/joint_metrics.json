@@ -1,0 +1,14 @@
+{
+  "node_classification": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "edge_classification": {
+    "accuracy": 0.9696569920844327,
+    "precision": 0.8349711895177204,
+    "recall": 0.9530891290597586,
+    "f1": 0.875139933074958
+  }
+}

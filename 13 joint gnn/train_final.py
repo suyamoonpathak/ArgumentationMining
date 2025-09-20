@@ -17,7 +17,7 @@ import json
 from sklearn.metrics import f1_score
 
 # Configuration
-GRAPH_DATA_DIR = Path("roberta_processed_graph_data_for_joint_prediction")
+GRAPH_DATA_DIR = Path("./graph_data/UNIFORM_NOISE_graph_data_for_joint_prediction")
 NUM_FOLDS = 10
 SEED = 42
 EPOCHS = 10
