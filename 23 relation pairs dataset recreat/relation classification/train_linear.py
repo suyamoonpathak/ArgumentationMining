@@ -15,7 +15,7 @@ import torch.nn.functional as F
 import json
 
 # Configuration
-GRAPH_DATA_DIR = Path("LegalBERT_PC_processed_graph_data_for_edge_prediction_csv")
+GRAPH_DATA_DIR = Path("LegalBERT_PCNA_processed_graph_data_for_joint_prediction_csv")
 NUM_FOLDS = 10
 SEED = 42
 EPOCHS = 10
@@ -183,7 +183,7 @@ class FocalLoss(torch.nn.Module):
         return focal_loss.mean() if self.reduction == 'mean' else focal_loss.sum()
 
 class SimpleMLP(torch.nn.Module):
-    def __init__(self, in_channels=770, hidden_channels=64, num_relations=3, dropout=0.5):
+    def __init__(self, in_channels=771, hidden_channels=64, num_relations=3, dropout=0.5):
         super().__init__()
         
         # Replace RGCNConv layers with Linear layers

@@ -1,0 +1,12 @@
+model_name,fold_number,accuracy,macro_precision,macro_recall,f1_score_macro_avg
+legalBERT_processed_GNN,1,0.8992,0.7415,0.9520,0.8047
+legalBERT_processed_GNN,2,0.9280,0.8129,0.9665,0.8726
+legalBERT_processed_GNN,3,0.8923,0.7850,0.9340,0.8337
+legalBERT_processed_GNN,4,0.8728,0.7799,0.9294,0.8291
+legalBERT_processed_GNN,5,0.8944,0.7711,0.9378,0.8262
+legalBERT_processed_GNN,6,0.9180,0.7532,0.9166,0.8100
+legalBERT_processed_GNN,7,0.8796,0.7593,0.9417,0.8195
+legalBERT_processed_GNN,8,0.8921,0.9184,0.9460,0.9241
+legalBERT_processed_GNN,9,0.9396,0.7327,0.9657,0.7924
+legalBERT_processed_GNN,10,0.8871,0.8067,0.9331,0.8519
+Average,Average,0.9003,0.7861,0.9423,0.8364

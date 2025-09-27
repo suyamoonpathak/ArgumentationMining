@@ -1,0 +1,36 @@
+=== Relation Classification Report ===
+              precision    recall  f1-score   support
+
+ no-relation       0.93      0.93      0.93       500
+     support       0.77      0.80      0.78       164
+      attack       0.00      0.00      0.00         7
+
+    accuracy                           0.89       671
+   macro avg       0.57      0.57      0.57       671
+weighted avg       0.88      0.89      0.88       671
+
+
+=== Source Classification Report ===
+              precision    recall  f1-score   support
+
+     non-arg       0.94      0.74      0.82       405
+     premise       0.70      0.93      0.80       263
+  conclusion       0.50      0.67      0.57         3
+
+    accuracy                           0.81       671
+   macro avg       0.71      0.78      0.73       671
+weighted avg       0.84      0.81      0.81       671
+
+
+=== Target Classification Report ===
+              precision    recall  f1-score   support
+
+     non-arg       0.89      0.77      0.83       394
+     premise       0.71      0.85      0.77       252
+  conclusion       0.88      0.92      0.90        25
+
+    accuracy                           0.81       671
+   macro avg       0.83      0.85      0.83       671
+weighted avg       0.82      0.81      0.81       671
+
+

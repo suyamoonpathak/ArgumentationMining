@@ -13,7 +13,7 @@ import seaborn as sns
 import os
 from datetime import datetime
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"  
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"  
 
 # Configuration
 MAX_LEN = 256
@@ -32,8 +32,8 @@ class ArgumentDataset(Dataset):
         self.max_len = max_len
         self.label_map = {
             'relation': {'no-relation': 0, 'support': 1, 'attack': 2},
-            'source_type': {'non-argumentative': 0, 'premise': 1, 'conclusion': 2},
-            'target_type': {'non-argumentative': 0, 'premise': 1, 'conclusion': 2}
+            'source_type': {'na': 0, 'prem': 1, 'conc': 2},
+            'target_type':  {'na': 0, 'prem': 1, 'conc': 2},
         }
 
     def __len__(self):
@@ -128,7 +128,7 @@ def save_classification_report(y_true_dict, preds_dict, fold_dir):
             f.write(report)
             f.write("\n\n")
             
-df = pd.read_csv('filtered_all_removed_conclusion_source.csv')
+df = pd.read_csv('4 PCNA_SANR_final.csv')
 sorted_df = df.sort_values('file_name').reset_index(drop=True)
 unique_files = sorted_df['file_name'].unique()
 kf = KFold(n_splits=10, shuffle=False)
